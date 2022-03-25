@@ -1,0 +1,12 @@
+# Request
+int8 CONST=1
+string string_value
+std_msgs/Float32 std_msgs_float
+example_package/example_msg example_msg
+
+---
+
+# Response
+uint32 CONST=123456
+uint32 int_value
+example_package/composed_msg composed_msg
