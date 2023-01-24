@@ -1,14 +1,10 @@
-#include "admittance_controller/admittance_controller.h"
+#include "example_package/example.h"
 
-
-void Shutdown_Signal_Handler (int sig) {
+void UR_Stop_Signal_Handler (int sig) {
 
     ros::NodeHandle nh;
     
-    std::string topic_joint_group_vel_controller_publisher;
-    nh.param<std::string>("/admittance_controller_Node/topic_joint_group_vel_controller", topic_joint_group_vel_controller_publisher, "/joint_group_vel_controller/command");
-
-    ros::Publisher joint_group_vel_controller_publisher = nh.advertise<std_msgs::Float64MultiArray>(topic_joint_group_vel_controller_publisher, 1);
+    ros::Publisher joint_group_vel_controller_publisher = nh.advertise<std_msgs::Float64MultiArray>("/joint_group_vel_controller/command", 1);
 
     std_msgs::Float64MultiArray stop_msgs;
     std::vector<double> stop_vector;
@@ -19,7 +15,6 @@ void Shutdown_Signal_Handler (int sig) {
     stop_msgs.layout.dim[0].stride = 1;
     stop_msgs.layout.dim[0].label = "velocity";
 
-    // copy in the data
     stop_msgs.data.clear();
     stop_msgs.data.insert(stop_msgs.data.end(), stop_vector.begin(), stop_vector.end());
 
@@ -29,61 +24,42 @@ void Shutdown_Signal_Handler (int sig) {
 
 }
 
+void custom_Signal_Handler (int sig) {
+
+    ros::NodeHandle nh;
+    
+    // DO THINGS ...
+
+    ros::shutdown();
+
+}
 
 int main(int argc, char **argv) {
 
-    ros::init(argc, argv, "admittance_controller_Node", ros::init_options::NoSigintHandler);
+    ros::init(argc, argv, "example_Node", ros::init_options::NoSigintHandler);
 
-    signal(SIGINT, Shutdown_Signal_Handler);
+    // Sig-Int Function (CTRL+C)
+    signal(SIGINT, UR_Stop_Signal_Handler);
+    signal(SIGINT, custom_Signal_Handler);
 
+    // ROS Initialisation Parameters
     ros::NodeHandle nh;
-    ros::Rate loop_rate = 1000;
+    ros::Rate ros_rate = 1000;
 
-    // Parameters
-    std::string topic_force_sensor_subscriber, topic_joint_states_subscriber;
-    std::string topic_joint_trajectory_publisher, topic_action_trajectory_publisher, topic_joint_group_vel_controller_publisher;
-
-    std::vector<double> mass_model_matrix, damping_model_matrix;
-    std::vector<double> joint_limits, maximum_velocity, maximum_acceleration;
-
-    double force_dead_zone, torque_dead_zone;
-    double admittance_weight;
-
-
-    // ---- LOADING "TOPIC NAME" PARAMETERS FROM THE ROS SERVER ---- //
-    if (!nh.param<std::string>("/admittance_controller_Node/topic_force_sensor", topic_force_sensor_subscriber, "/wrench")) {ROS_ERROR("Couldn't retrieve the Force Sensor Topic's name.");}
-    if (!nh.param<std::string>("/admittance_controller_Node/topic_joint_states", topic_joint_states_subscriber, "/joint_states")) {ROS_ERROR("Couldn't retrieve the Joint States Topic's name.");}
-
-    if (!nh.param<std::string>("/admittance_controller_Node/topic_joint_trajectory", topic_joint_trajectory_publisher, "/scaled_pos_joint_traj_controller/command")) {ROS_ERROR("Couldn't retrieve the Trajectory Publisher Topic's name.");}
-    if (!nh.param<std::string>("/admittance_controller_Node/topic_action_trajectory", topic_action_trajectory_publisher, "/scaled_pos_joint_traj_controller/follow_joint_trajectory")) {ROS_ERROR("Couldn't retrieve the Action Publisher Topic's name.");}
-    if (!nh.param<std::string>("/admittance_controller_Node/topic_joint_group_vel_controller", topic_joint_group_vel_controller_publisher, "/joint_group_vel_controller/command")) {ROS_ERROR("Couldn't retrieve the Velocity Controller Topic's name.");}
+    // Class Initialisation Parameters
+    std::string example_string = "example_data";
+    std::vector<double> example_vector = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
     
-    // ---- LOADING "ADMITTANCE" PARAMETERS FROM THE ROS SERVER ---- //
-    if (!nh.getParam("/admittance_controller_Node/mass_matrix", mass_model_matrix)) {ROS_ERROR("Couldn't retrieve the Mass Matrix parameter.");}
-    if (!nh.getParam("/admittance_controller_Node/damping_matrix", damping_model_matrix)) {ROS_ERROR("Couldn't retrieve the Damping Matrix parameter.");}
-    if (!nh.param("/admittance_controller_Node/force_dead_zone", force_dead_zone, 3.0)) {ROS_ERROR("Couldn't retrieve the Force Dead Zone parameter.");}
-    if (!nh.param("/admittance_controller_Node/torque_dead_zone", torque_dead_zone, 3.0)) {ROS_ERROR("Couldn't retrieve the Torque Dead Zone parameter.");}
-    if (!nh.param("/admittance_controller_Node/admittance_weight", admittance_weight, 1.0)) {ROS_ERROR("Couldn't retrieve the Admittance Weight parameter.");}
+    ExamplePackage *ep = new ExamplePackage(nh, ros_rate, example_string, example_vector);
+                     
+    while (ros::ok())
+    {
 
-    // ---- LOADING "SAFETY" PARAMETERS FROM THE ROS SERVER ---- //
-    if (!nh.getParam("/admittance_controller_Node/joint_limits", joint_limits)) {ROS_ERROR("Couldn't retrieve the Joint Limits parameter.");}
-    if (!nh.getParam("/admittance_controller_Node/maximum_velocity", maximum_velocity)) {ROS_ERROR("Couldn't retrieve the Maximum Velocity parameter.");}
-    if (!nh.getParam("/admittance_controller_Node/maximum_acceleration", maximum_acceleration)) {ROS_ERROR("Couldn't retrieve the Maximum Acceleration parameter.");}
-    
-
-    admittance_control *ac = new admittance_control (
-        nh, loop_rate, topic_force_sensor_subscriber, topic_joint_states_subscriber,
-        topic_joint_trajectory_publisher, topic_action_trajectory_publisher, topic_joint_group_vel_controller_publisher,
-        mass_model_matrix, damping_model_matrix, force_dead_zone, torque_dead_zone, admittance_weight,
-        joint_limits, maximum_velocity, maximum_acceleration);
-
-    while (ros::ok()) {
-
-        ac -> spinner();
+        ep -> spinner();
 
     }
 
-    delete ac;
+    delete ep;
 
 return 0;
 

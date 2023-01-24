@@ -1,43 +1,63 @@
-#include "admittance_controller/admittance_controller.h"
-
+#include "example_package/example.h"
 
 //----------------------------------------------------- CONSTRUCTOR -----------------------------------------------------//
 
-admittance_control::admittance_control(   
-    ros::NodeHandle &n, ros::Rate ros_rate,   
-    std::string topic_force_sensor_subscriber, std::string topic_joint_states_subscriber,
-    std::string topic_joint_trajectory_publisher, std::string topic_action_trajectory_publisher, std::string topic_joint_group_vel_controller_publisher,
-    std::vector<double> mass_model_matrix, std::vector<double> damping_model_matrix,
-    double force_dead_zone, double torque_dead_zone, double admittance_weight,
-    std::vector<double> joint_limits, std::vector<double> maximum_velocity, std::vector<double> maximum_acceleration):
+    
+ExamplePackage::ExamplePackage(
+    ros::NodeHandle &nh, ros::Rate ros_rate, std::string example_data, std::vector<double> example_vector):
+    nh_(nh), ros_rate_(ros_rate), example_string_(example_data), example_vector_(example_vector)
+{
+    
+    // ---- LOAD GLOBAL PARAMETERS ---- //
+    if (!nh.param<std::string>("/example_string_param", example_string_param_, "Default Example")) 
+        ROS_ERROR_STREAM("Failed to read the \"example_string_param parameter\" | Using Default: " << example_string_param_);
+    
+    if (!nh.param<double>("/example_double_param", example_double_param_, 1.1)) 
+        ROS_ERROR_STREAM("Failed to read the \"example_double_param parameter\" | Using Default: " << example_double_param_);
 
-    nh(n), loop_rate(ros_rate), mass_matrix(mass_model_matrix.data()), damping_matrix(damping_model_matrix.data()), 
-    force_dead_zone(force_dead_zone), torque_dead_zone(torque_dead_zone), admittance_weight(admittance_weight),
-    joint_lim(joint_limits.data()), max_vel(maximum_velocity.data()), max_acc(maximum_acceleration.data()) {
+    // ---- LOAD NODE SPECIFIC PARAMETERS ---- //
+     if (!nh.param<bool>("/example_cpp_node/example_bool_param", example_bool_param_, true)) 
+        ROS_ERROR_STREAM("Failed to read the \"example_bool_param parameter\" | Using Default: " << example_bool_param_);
 
-    // ---- LOAD PARAMETERS ---- //
-    if (!nh.param<bool>("/admittance_controller_Node/use_feedback_velocity", use_feedback_velocity, false)) {ROS_ERROR("Couldn't retrieve the Feedback Velocity value.");}
-    if (!nh.param<bool>("/admittance_controller_Node/inertia_reduction", inertia_reduction, false)) {ROS_ERROR("Couldn't retrieve the Inertia Reduction value.");}
-    if (!nh.param<bool>("/admittance_controller_Node/use_ur_real_robot", use_ur_real_robot, false)) {ROS_ERROR("Couldn't retrieve the Use Real Robot value.");}
-    if (!nh.param<bool>("/admittance_controller_Node/auto_start_admittance", admittance_control_request, true)) {ROS_ERROR("Couldn't retrieve the Auto Start Admittance value.");}
+    if (!nh.param<std::vector<double>>("/example_cpp_node/example_vector_param", example_vector_param_, {1.1, 1.1})) 
+        ROS_ERROR_STREAM("Failed to read the \"example_vector_param parameter\" | Using Default: " << example_vector_param_[0] << ", " << example_vector_param_[1]);
+
+    // ---- LOAD NAMESPACED PARAMETERS ---- //
+    if (!nh.param<std::string>("/namespace_1/example_string_param", example_string_param_, "Default Example")) 
+        ROS_ERROR_STREAM("Failed to read the \"example_string_param parameter\" | Using Default: " << example_string_param_);
     
-    // ---- ROS PUBLISHERS ---- //
-    joint_trajectory_publisher = nh.advertise<trajectory_msgs::JointTrajectory>(topic_joint_trajectory_publisher, 1);
-    joint_group_vel_controller_publisher = nh.advertise<std_msgs::Float64MultiArray>(topic_joint_group_vel_controller_publisher, 1);
-    ur10e_script_command_publisher = nh.advertise<std_msgs::String>("/ur_hardware_interface/script_command",1);
-    cartesian_position_publisher = nh.advertise<geometry_msgs::Pose>("/ur_cartesian_pose",1);
+    if (!nh.param<double>("/namespace_1/example_double_param", example_double_param_, 1.1)) 
+        ROS_ERROR_STREAM("Failed to read the \"example_double_param parameter\" | Using Default: " << example_double_param_)
+
+     // ---- LOAD YAML FILE PARAMETERS ---- //
+    if (!nh.param<std::string>("/yaml_string_param", example_string_param_, "Default Example")) 
+        ROS_ERROR_STREAM("Failed to read the \"yaml_string_param parameter\" | Using Default: " << example_string_param_);
     
-    // ---- ROS SUBSCRIBERS ---- //
-    force_sensor_subscriber = nh.subscribe(topic_force_sensor_subscriber, 1, &admittance_control::force_sensor_Callback, this);
-    joint_states_subscriber = nh.subscribe(topic_joint_states_subscriber, 1, &admittance_control::joint_states_Callback, this);
-    trajectory_execution_subscriber = nh.subscribe("/admittance_controller/trajectory_execution", 1, &admittance_control::trajectory_execution_Callback, this);
+    if (!nh.param<double>("/yaml_double_param", example_double_param_, 1.1)) 
+        ROS_ERROR_STREAM("Failed to read the \"yaml_double_param parameter\" | Using Default: " << example_double_param_);
+
+     if (!nh.param<bool>("/yaml_bool_param", example_bool_param_, true)) 
+        ROS_ERROR_STREAM("Failed to read the \"yaml_bool_param parameter\" | Using Default: " << example_bool_param_);
+
+    if (!nh.param<std::vector<double>>("/yaml_vector_param", example_vector_param_, {1.1, 1.1})) 
+        ROS_ERROR_STREAM("Failed to read the \"yaml_vector_param parameter\" | Using Default: " << example_vector_param_[0] << ", " << example_vector_param_[1]);
+
+
+    // ---- ROS - PUBLISHERS ---- //
+    example_publisher_        = nh.advertise<trajectory_msgs::JointTrajectory>("/global_example_publisher_topic_name", 1);
+    example_custom_publisher_ = nh.advertise<example_package::example_msg>("local_example_publisher_topic_name", 1);
+
+    // ---- ROS - SUBSCRIBERS ---- //
+    example_subscriber_        = nh.subscribe("/global_example_subscriber_topic_name", 1, &ExamplePackage::exampleSubscriberCallback, this);
+    example_custom_subscriber_ = nh.subscribe("/group/example_subscriber_topic_name", 1, &ExamplePackage::exampleCustomSubscriberCallback, this);
     
-    // ---- ROS SERVICE SERVERS ---- //
+}
+    
+    // ---- ROS - SERVICE SERVERS ---- //
     admittance_controller_activation_service = nh.advertiseService("/admittance_controller/admittance_controller_activation_service", &admittance_control::Admittance_Controller_Activation_Service_Callback, this);
     change_admittance_parameters_service = nh.advertiseService("/admittance_controller/change_admittance_parameters_service", &admittance_control::Change_Admittance_Parameters_Service_Callback, this);
     ur10e_freedrive_mode_service = nh.advertiseService("/admittance_controller/ur10e_freedrive_mode_service", &admittance_control::FreedriveMode_Service_Callback, this);
     ur10e_restart_urcap_service = nh.advertiseService("/admittance_controller/ur10e_restart_urcap_service", &admittance_control::Restart_URCap_Service_Callback, this);
-
 
     // ---- ROS SERVICE CLIENTS ---- //
     switch_controller_client    = nh.serviceClient<controller_manager_msgs::SwitchController>("/controller_manager/switch_controller");
@@ -46,7 +66,7 @@ admittance_control::admittance_control(
     ur10e_resend_robot_program  = nh.serviceClient<std_srvs::Trigger>("/ur_hardware_interface/resend_robot_program");
     ur10e_play_urcap            = nh.serviceClient<std_srvs::Trigger>("/ur_hardware_interface/dashboard/play");
     
-    // ---- ROS ACTIONS ---- //
+    // ---- ROS - ACTIONS ---- //
     trajectory_client = new actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>(topic_action_trajectory_publisher, true);
 
     // Initializing the Class Variables

@@ -37,11 +37,15 @@ struct example_struct {
 
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 
+#define BOOL_DEFINITION true
+#define INT_DEFINITION 10
+#define STRING_DEFINITION "String Definition"
+
 class ExamplePackage {
 
     public:
     
-      ExamplePackage(ros::NodeHandle &n, ros::Rate ros_rate,
+      ExamplePackage(ros::NodeHandle &nh, ros::Rate ros_rate,
                      std::string example_data,
                      std::vector<double> example_vector);
 
@@ -56,20 +60,21 @@ class ExamplePackage {
 
         // ---- ROS - NODE HANDLE & RATE ---- //
         ros::NodeHandle nh_;
-        ros::Rate loop_rate_;
+        ros::Rate ros_rate_;
 
         // ---- GLOBAL VARIABLES ---- //
-        example_struct a_;
-        std::vector<double> b_;
-        Vector6d c_;
+        bool example_bool_ = false;
+        int example_int_ = 100;
+        std::string example_string_ = "Default";
+        std::vector<double> example_vector_ = {1, 1.1, 0.0};
+        Vector6d example_eigen_vector_;
+        example_struct example_struct_;
 
-        // ---- MoveIt! ROBOT MODEL ---- //
-        robot_model_loader::RobotModelLoader robot_model_loader_;
-        robot_model::RobotModelPtr kinematic_model_;
-        robot_state::RobotStatePtr kinematic_state_;
-        const robot_state::JointModelGroup *joint_model_group_;
-        std::vector<std::string> joint_names_;
-        Eigen::MatrixXd J_;
+        // ---- ROS - PARAMETERS ---- //
+        std::string example_string_param_;
+        double example_double_param_;
+        bool example_bool_param_;
+        std::vector<double> example_vector_param_;
 
         // ---- ROS - PUBLISHERS ---- //
         ros::Publisher example_publisher_;
@@ -95,8 +100,18 @@ class ExamplePackage {
         actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> *trajectory_client;
         control_msgs::FollowJointTrajectoryGoal trajectory_goal;
 
+        // ---- MoveIt! ROBOT MODEL ---- //
+        robot_model_loader::RobotModelLoader robot_model_loader_;
+        robot_model::RobotModelPtr kinematic_model_;
+        robot_state::RobotStatePtr kinematic_state_;
+        const robot_state::JointModelGroup *joint_model_group_;
+        std::vector<std::string> joint_names_;
+        Eigen::MatrixXd J_;
+
         // ---- USEFUL FILTERS ---- //
-        std::vector<double> Low_Pass_Filter(std::vector<double> data, int filter_dimensions = 100);
+        std::vector<double> LowPassFilter(std::vector<double> data, int filter_dimensions = 100);
+        std::vector<double> RCFilter(std::vector<double> data, int filter_dimensions = 100);
+        std::vector<double> ButterworthFilter(std::vector<double> data, int filter_dimensions = 100);
 
         // ---- USEFUL FUNCTIONS ---- //
         int getSign(double data);

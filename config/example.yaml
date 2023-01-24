@@ -1,0 +1,7 @@
+# Parameters
+yaml_string_param: "YAML String Example"
+yaml_double_param: 10.0
+yaml_bool_param: false
+
+# Vectors
+yaml_vector_param: [0.0, 0.0, 0.0]
