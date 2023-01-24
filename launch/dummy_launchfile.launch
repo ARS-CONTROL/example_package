@@ -1,0 +1,9 @@
+<launch>
+
+    <arg name="example_string_param"  default="old_example"/>
+    <arg name="example_double_param"  default="1.0"/>
+
+    <param name="example_string_param_" value="$(arg example_string_param)"/>
+    <param name="example_double_param_" value="$(arg example_double_param)"/>
+
+</launch>
