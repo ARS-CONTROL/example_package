@@ -96,7 +96,7 @@ class ExamplePackage {
         bool exampleServerCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
         bool exampleCustomServerCallback(example_package::example_srv::Request &req, example_package::example_srv::Response &res);
 
-        // ---- ROS ACTIONS ---- //
+        // ---- ROS - ACTIONS ---- //
         actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> *trajectory_client;
         control_msgs::FollowJointTrajectoryGoal trajectory_goal;
 
@@ -108,10 +108,14 @@ class ExamplePackage {
         std::vector<std::string> joint_names_;
         Eigen::MatrixXd J_;
 
-        // ---- USEFUL FILTERS ---- //
-        std::vector<double> LowPassFilter(std::vector<double> data, int filter_dimensions = 100);
-        std::vector<double> RCFilter(std::vector<double> data, int filter_dimensions = 100);
-        std::vector<double> ButterworthFilter(std::vector<double> data, int filter_dimensions = 100);
+        // ---- KINEMATIC FUNCTIONS ---- //
+        Eigen::Matrix4d computeFK (std::vector<double> joint_position, std::vector<double> joint_velocity);
+        Eigen::MatrixXd computeArmJacobian (std::vector<double> joint_position, std::vector<double> joint_velocity);
+        Matrix6d getEE_RotationMatrix (std::vector<double> joint_position, std::vector<double> joint_velocity);
+
+        // ---- PUBLISH - CALL FUNCTIONS ---- //
+        void PublishMessage (void);
+        void CallService (void);
 
         // ---- USEFUL FUNCTIONS ---- //
         int getSign(double data);
