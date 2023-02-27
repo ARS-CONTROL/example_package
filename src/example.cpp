@@ -59,7 +59,7 @@ ExamplePackage::ExamplePackage(
     example_custom_client_     = nh.serviceClient<example_package::example_srv>("/group/example_server_name");
 
     // ---- ROS - ACTIONS ---- //
-    trajectory_client = new actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>("/trajectory_publisher_action_name", true);
+    action_client_ = new actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>("/trajectory_publisher_action_name", true);
 
     // ---- MoveIt Robot Model ---- //
     robot_model_loader_ = robot_model_loader::RobotModelLoader ("robot_description");
@@ -248,6 +248,44 @@ void ExamplePackage::CallService (void) {
     
 }
 
+void ExamplePackage::CallAction (void) {
+
+    // Service Creation
+    std_srvs::SetBool example_srv;
+    
+    // Service Filling
+    example_srv.request.data = true;
+
+    // Call Service
+    if (example_client_.call(example_srv)) {}
+    else {ROS_ERROR("Failed to Call Service: \"/global_example_server_name\"");}
+
+    // Wait for the Action Server to Start
+    ROS_INFO("Waiting for Action Server to Start");
+    action_client_ -> waitForServer();
+    ROS_INFO("Action Server Started, Sending Goal");
+
+    // ROS Action Goal Filling
+    control_msgs::FollowJointTrajectoryGoal goal;
+    goal.trajectory.joint_names = {"shoulder_pan_joint", "shoulder_lift_joint", "elbow_joint", "wrist_1_joint", "wrist_2_joint", "wrist_3_joint"};
+    goal.trajectory.points.resize(1);
+    goal.trajectory.points[0].positions = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    goal.trajectory.points[0].time_from_start = ros::Duration(5);
+
+    // Send a Goal to the Action
+    action_client_ -> sendGoal(goal);
+
+    // Wait for the Action to Return
+    bool finished_before_timeout = action_client_ -> waitForResult(ros::Duration(30.0));
+  
+    if (finished_before_timeout) {
+
+        actionlib::SimpleClientGoalState state = action_client_ -> getState();
+        ROS_INFO("Action Finished: %s",state.toString().c_str());
+    
+    } else ROS_INFO("Action Not Finished Before the Time-Out.");
+  
+}
 
 //--------------------------------------------------- UTILS FUNCTIONS ---------------------------------------------------//
 
@@ -267,7 +305,10 @@ void ExamplePackage::spinner (void) {
     // Publish a ROS Message
     PublishMessage();
 
-    // Call a ROS Server/Client
+    // Call a ROS Service Client
     CallService();
+
+    // Call a ROS Action Client
+    CallAction();
 
 }

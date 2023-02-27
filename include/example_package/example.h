@@ -97,7 +97,7 @@ class ExamplePackage {
         bool exampleCustomServerCallback(example_package::example_srv::Request &req, example_package::example_srv::Response &res);
 
         // ---- ROS - ACTIONS ---- //
-        actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> *trajectory_client;
+        actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> *action_client_;
         control_msgs::FollowJointTrajectoryGoal trajectory_goal;
 
         // ---- MoveIt! ROBOT MODEL ---- //
@@ -116,6 +116,7 @@ class ExamplePackage {
         // ---- PUBLISH - CALL FUNCTIONS ---- //
         void PublishMessage (void);
         void CallService (void);
+        void CallAction (void);
 
         // ---- USEFUL FUNCTIONS ---- //
         int getSign(double data);
