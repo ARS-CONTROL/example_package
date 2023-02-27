@@ -62,7 +62,7 @@ ExamplePackage::ExamplePackage(
     action_client_ = new actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>("/trajectory_publisher_action_name", true);
 
     // ---- MoveIt Robot Model ---- //
-    robot_model_loader_ = robot_model_loader::RobotModelLoader ("robot_description");
+    robot_model_loader_ = robot_model_loader::RobotModelLoader("robot_description");
     kinematic_model_    = robot_model_loader_.getModel();
     kinematic_state_    = robot_state::RobotStatePtr(new robot_state::RobotState(kinematic_model_));
     kinematic_state_    -> setToDefaultValues();
@@ -74,7 +74,7 @@ ExamplePackage::ExamplePackage(
     ROS_WARN("Warn Print");
     ROS_ERROR("Error Print");
     ROS_INFO_STREAM_ONCE("cout Print Once: " << 10 << std::endl);
-    ROS_INFO_ONCE("Printf Print Once: %.2f", 10);
+    ROS_INFO_ONCE("Printf Print Once: %.2f", 10.0);
     ROS_INFO_THROTTLE(10, "Print Every n Seconds");
     ROS_INFO_DELAYED_THROTTLE(10, "Print Every n Seconds, Ignoring the First One");
 

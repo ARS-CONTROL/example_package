@@ -4,16 +4,25 @@ project(example_package)
 ## Compile as C++17
 add_compile_options(-std=c++17)
 
+find_package(Eigen3 REQUIRED)
+
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
 
   # ROS Dependancies
   roscpp
   rospy
+  actionlib
+  message_generation
 
   # Message Dependancies
-  message_generation
   std_msgs
+  control_msgs
+  std_srvs
+
+  # MoveIt
+  moveit_core
+  moveit_ros_planning_interface
 
 )
 
@@ -83,10 +92,12 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES example_package
-#  CATKIN_DEPENDS roscpp rospy std_msgs
-#  DEPENDS system_lib
+  INCLUDE_DIRS 
+  include
+  #  LIBRARIES example_package
+  CATKIN_DEPENDS
+  message_runtime
+  #  DEPENDS system_lib
 )
 
 ###########
@@ -96,7 +107,8 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
+  ${EIGEN3_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -129,6 +141,11 @@ include_directories(
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+
+# Add C++ Executable
+add_executable(example_cpp_node src/example_node.cpp src/example.cpp)
+target_link_libraries(example_cpp_node ${catkin_LIBRARIES})
+add_dependencies(example_cpp_node ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 #############
 ## Install ##

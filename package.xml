@@ -17,11 +17,17 @@
   <!-- ROS Dependancies -->
   <depend>roscpp</depend>
   <depend>rospy</depend>
+  <depend>actionlib</depend>
 
   <!-- Message Dependancies -->
   <depend>std_msgs</depend>
+  <depend>control_msgs</depend>
+  <depend>std_srvs</depend>
 
   <!-- External Libraries Dependancies -->
+  <depend>eigen</depend>
+  <depend>moveit_core</depend>
+  <depend>moveit_ros_planning_interface</depend>
 
   <!-- Others Packages Dependancies -->
 
