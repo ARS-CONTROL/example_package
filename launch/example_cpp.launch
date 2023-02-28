@@ -16,12 +16,6 @@
         <rosparam param="example_vector_param">[0.0, 0.0]</rosparam>
     </node>
 
-    <!-- Launch Python Nodes -->
-    <node pkg="example_package" type="example.py" name="example_python_node" output="screen">
-        <param name="example_bool_param" value="false"/>
-        <rosparam param="example_vector_param">[0.0, 0.0]</rosparam>
-    </node>
-
     <!-- Include Other Launchfiles -->
     <include ns="namespace_1" file="$(find example_package)/launch/dummy_launchfile.launch">
         <arg name="example_string_param" value="new_example"/>
