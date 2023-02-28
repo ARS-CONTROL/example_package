@@ -11,8 +11,8 @@
 #include <trajectory_msgs/JointTrajectory.h>
 #include <std_srvs/SetBool.h>
 
-#include "example_package/example_msg.h"
-#include "example_package/example_srv.h"
+#include "example_package/ExampleMsg.h"
+#include "example_package/ExampleSrv.h"
 
 #include <actionlib/client/simple_action_client.h>
 #include <control_msgs/FollowJointTrajectoryAction.h>
@@ -82,7 +82,7 @@ class ExamplePackage {
         ros::Subscriber example_subscriber_;
         ros::Subscriber example_custom_subscriber_;
         void exampleSubscriberCallback(const std_msgs::Float64MultiArray::ConstPtr &msg);
-        void exampleCustomSubscriberCallback(const example_package::example_msg::ConstPtr &msg);
+        void exampleCustomSubscriberCallback(const example_package::ExampleMsg::ConstPtr &msg);
 
         // ---- ROS - SERVICE CLIENTS ---- //
         ros::ServiceClient example_client_;
@@ -92,7 +92,7 @@ class ExamplePackage {
         ros::ServiceServer example_server_;
         ros::ServiceServer example_custom_server_;
         bool exampleServerCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
-        bool exampleCustomServerCallback(example_package::example_srv::Request &req, example_package::example_srv::Response &res);
+        bool exampleCustomServerCallback(example_package::ExampleSrv::Request &req, example_package::ExampleSrv::Response &res);
 
         // ---- ROS - ACTIONS ---- //
         actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> *action_client_;

@@ -44,19 +44,19 @@ ExamplePackage::ExamplePackage(
 
     // ---- ROS - PUBLISHERS ---- //
     example_publisher_         = nh.advertise<trajectory_msgs::JointTrajectory>("/global_example_publisher_topic_name", 1);
-    example_custom_publisher_  = nh.advertise<example_package::example_msg>("local_example_publisher_topic_name", 1);
+    example_custom_publisher_  = nh.advertise<example_package::ExampleMsg>("local_example_publisher_topic_name", 1);
 
     // ---- ROS - SUBSCRIBERS ---- //
     example_subscriber_        = nh.subscribe("/global_example_subscriber_topic_name", 1, &ExamplePackage::exampleSubscriberCallback, this);
     example_custom_subscriber_ = nh.subscribe("/group/example_subscriber_topic_name", 1, &ExamplePackage::exampleCustomSubscriberCallback, this);
     
+    // ---- ROS - SERVICE CLIENTS ---- //
+    example_client_            = nh.serviceClient<std_srvs::SetBool>("/global_example_server_name");
+    example_custom_client_     = nh.serviceClient<example_package::ExampleSrv>("/group/example_server_name");
+
     // ---- ROS - SERVICE SERVERS ---- //
     example_server_            = nh.advertiseService("/global_example_server_name", &ExamplePackage::exampleServerCallback, this);
     example_custom_server_     = nh.advertiseService("/group/example_server_name", &ExamplePackage::exampleCustomServerCallback, this);
-
-    // ---- ROS - SERVICE CLIENTS ---- //
-    example_client_            = nh.serviceClient<std_srvs::SetBool>("/global_example_server_name");
-    example_custom_client_     = nh.serviceClient<example_package::example_srv>("/group/example_server_name");
 
     // ---- ROS - ACTIONS ---- //
     action_client_ = new actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>("/trajectory_publisher_action_name", true);
@@ -94,9 +94,9 @@ void ExamplePackage::exampleSubscriberCallback(const std_msgs::Float64MultiArray
 
 }
 
-void ExamplePackage::exampleCustomSubscriberCallback(const example_package::example_msg::ConstPtr &msg) {
+void ExamplePackage::exampleCustomSubscriberCallback(const example_package::ExampleMsg::ConstPtr &msg) {
 
-    example_package::example_msg received_custom_msg = *msg;
+    example_package::ExampleMsg received_custom_msg = *msg;
 
     // DO THINGS...
 
@@ -115,9 +115,9 @@ bool ExamplePackage::exampleServerCallback(std_srvs::SetBool::Request &req, std_
 
 }
 
-bool ExamplePackage::exampleCustomServerCallback(example_package::example_srv::Request &req, example_package::example_srv::Response &res) {
+bool ExamplePackage::exampleCustomServerCallback(example_package::ExampleSrv::Request &req, example_package::ExampleSrv::Response &res) {
 
-    example_package::example_srv::Request received_request = req;
+    example_package::ExampleSrv::Request received_request = req;
 
     std::string string_value = received_request.string_value;
     std_msgs::Float32 std_msgs_float = received_request.std_msgs_float;
