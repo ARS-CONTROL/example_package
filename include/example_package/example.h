@@ -8,6 +8,7 @@
 #include <ros/package.h>
 
 #include <std_msgs/Float64MultiArray.h>
+#include <trajectory_msgs/JointTrajectory.h>
 #include <std_srvs/SetBool.h>
 
 #include "example_package/example_msg.h"
@@ -52,9 +53,6 @@ class ExamplePackage {
       ~ExamplePackage();
 
       void spinner(void);
-
-      bool debug_;
-      bool offstream_debug_;
 
     private:
 
@@ -120,9 +118,6 @@ class ExamplePackage {
 
         // ---- USEFUL FUNCTIONS ---- //
         int getSign(double data);
-
-        // ---- OFFSTREAM DEBUG ---- //
-        std::ofstream ofstream_debug_;
 
 };
 

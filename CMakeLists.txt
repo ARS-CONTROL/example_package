@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   # Message Dependancies
   std_msgs
   control_msgs
+  trajectory_msgs
   std_srvs
 
   # MoveIt
@@ -188,6 +189,11 @@ add_dependencies(example_cpp_node ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_E
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
+
+install(PROGRAMS 
+  scripts/example.py
+  DESTINATION ${CATKIN_PACKAGE_PYTHON_DESTINATION}
+)
 
 #############
 ## Testing ##

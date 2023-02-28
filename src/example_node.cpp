@@ -42,11 +42,11 @@ int main(int argc, char **argv) {
     signal(SIGINT, UR_Stop_Signal_Handler);
     signal(SIGINT, custom_Signal_Handler);
 
-    // ROS Initialisation Parameters
+    // ROS Initialization Parameters
     ros::NodeHandle nh;
     ros::Rate ros_rate = 1000;
 
-    // Class Initialisation Parameters
+    // Class Initialization Parameters
     std::string example_string = "example_data";
     std::vector<double> example_vector = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
     
