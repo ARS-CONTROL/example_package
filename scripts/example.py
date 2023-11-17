@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-import rospy
+import rospy, rospkg
 import signal
 
 from std_msgs.msg import Float64MultiArray, MultiArrayDimension
@@ -63,6 +63,10 @@ class ExamplePackage:
         
         # ---- ROS - RATE ---- #
         self.ros_rate_ = ros_rate
+
+        # ---- Get Package Path ---- #
+        rospack = rospkg.RosPack()
+        package_path = rospack.get_path('example_package')
 
         # ---- GLOBAL VARIABLES ---- #
         self.example_bool_   = False
@@ -260,6 +264,9 @@ if __name__ == '__main__':
     ep = ExamplePackage(ros_rate, example_string, example_vector)
 
     # Main Spinner Function
-    while not rospy.is_shutdown(): ep.spinner()
+    while not rospy.is_shutdown():
+
+        ep.spinner()
+        ros_rate.sleep()
 
     del ep

@@ -1,29 +1,22 @@
-# README #
+# ROS Example Package - Noetic
 
-This README would normally document whatever steps are necessary to get your application up and running.
+* ROS Noetic
+* [Official ROS Tutorials](http://wiki.ros.org/ROS/Tutorials)
 
-### What is this repository for? ###
+## Package Description
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+This package contains an example of a ROS C++ or Python Code.
 
-### How do I get set up? ###
+* ROS Topics (Publisher and Subscriber)
+* ROS Services (Client and Server)
+* ROS Actions
+* Custom Messages, Services, Actions
+* ROS Parameters, YAML files
+* CMakeLists.txt and package.xml
+* Launch files
+* Useful Functions (Signal Handler, Class Programming)
+* MoveIt (C++)
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+## Maintainers
 
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+* Davide Ferrari
