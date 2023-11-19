@@ -1,29 +1,27 @@
-# README #
+# ROS 2 Example Package - Foxy
 
-This README would normally document whatever steps are necessary to get your application up and running.
+* ROS Foxy
+* [Official ROS 2 Tutorials](https://docs.ros.org/en/foxy/Tutorials.html)
 
-### What is this repository for? ###
+## In Development (TODO)
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* C++ Code
+* MoveIt
 
-### How do I get set up? ###
+## Package Description
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+This package contains an example of a ROS 2 C++ or Python Code.
 
-### Contribution guidelines ###
+* ROS Topics (Publisher and Subscriber)
+* ROS Services (Client and Server)
+* ROS Actions
+* Custom Messages, Services, Actions
+* ROS Parameters, YAML files
+* CMakeLists.txt and package.xml
+* Launch files
+* Useful Functions (Signal Handler, Class Programming)
+* MoveIt (C++)
 
-* Writing tests
-* Code review
-* Other guidelines
+## Maintainers
 
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+* Davide Ferrari

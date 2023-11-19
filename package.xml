@@ -1,8 +1,11 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<package format="3">
+
   <name>example_package</name>
   <version>0.0.0</version>
-  <description>The example_package package</description>
+  <description>ROS2 Example Package</description>
 
   <!-- Maintainer, Author, License -->
   <maintainer email="davide.ferrari95@unimore.it">Davide Ferrari</maintainer>
@@ -10,14 +13,17 @@
   <license>BSD-3</license>
 
   <!-- Build Dependancies -->
-  <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>message_generation</build_depend>
-  <exec_depend>message_runtime</exec_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
 
   <!-- ROS Dependancies -->
-  <depend>roscpp</depend>
-  <depend>rospy</depend>
-  <depend>actionlib</depend>
+  <depend>rclcpp</depend>
+  <depend>rclpy</depend>
+
+  <!-- Custom Message Creation Dependancies -->
+  <!-- <buildtool_depend>rosidl_default_generators</buildtool_depend> -->
+  <!-- <exec_depend>rosidl_default_runtime</exec_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group> -->
 
   <!-- Message Dependancies -->
   <depend>std_msgs</depend>
@@ -25,11 +31,17 @@
   <depend>trajectory_msgs</depend>
   <depend>std_srvs</depend>
 
-  <!-- External Libraries Dependancies -->
-  <depend>eigen</depend>
-  <depend>moveit_core</depend>
-  <depend>moveit_ros_planning_interface</depend>
+  <!-- Test Dependancies -->
+  <!-- <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend> -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
 
-  <!-- Others Packages Dependancies -->
+  <export>
+    <!-- <build_type>ament_python</build_type> -->
+    <build_type>ament_cmake</build_type>
+  </export>
 
 </package>
