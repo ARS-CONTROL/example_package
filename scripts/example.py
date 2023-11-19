@@ -13,8 +13,9 @@ from std_msgs.msg import String, Float64MultiArray, MultiArrayDimension
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from std_srvs.srv import SetBool
 
-# from example_package.msg import ExampleMsg
-# from example_package.srv import ExampleSrv, ExampleSrvRequest, ExampleSrvResponse
+# Import Custom ROS Messages and Services
+from example_package.msg import ExampleMsg, ComposedMsg
+from example_package.srv import ExampleSrv
 
 # import actionlib
 # from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryActionGoal
@@ -63,7 +64,7 @@ class ExamplePackage(Node):
         self.example_string_ = 'Default'
         self.example_vector_ = [1, 1.1, 0.0]
         self.example_struct_ = example_struct(1.0, 'String', [1,2,3])
-        
+
         # ---- CLASS - PARAMETERS ---- #
         self.example_string_ = example_data
         self.example_vector_ = example_vector
@@ -73,7 +74,7 @@ class ExamplePackage(Node):
         self.example_double_param_ = 0.0
         self.example_bool_param_   = False
         self.example_vector_param_ = []
-        
+
         # # ---- LOAD GLOBAL PARAMETERS ---- #
         # self.example_string_param_ = rospy.get_param('/example_string_param',  default='Default Example')
         # self.example_double_param_ = rospy.get_param('/example_double_param_', default=1.1)
@@ -85,31 +86,30 @@ class ExamplePackage(Node):
         # # ---- LOAD NAMESPACED PARAMETERS ---- #
         # self.example_string_param_ = rospy.get_param('/namespace_1/example_string_param', default='Default Example')
         # self.example_double_param_ = rospy.get_param('/namespace_1/example_double_param', default=1.1)
-        
+
         # # ---- LOAD YAML FILE PARAMETERS ---- #
         # self.example_string_param_ = rospy.get_param('/yaml_string_param', default='Default Example')
         # self.example_double_param_ = rospy.get_param('/yaml_double_param', default=1.1)
         # self.example_bool_param_   = rospy.get_param('/yaml_bool_param',   default=True)
         # self.example_vector_param_ = rospy.get_param('/yaml_vector_param', default=[1.1, 1.1])
-        
+
         # ---- ROS - PUBLISHERS ---- #
         self.string_publisher_  = self.create_publisher(String, '/string_topic_name', 1)
         self.example_publisher_ = self.create_publisher(JointTrajectory, '/global_example_publisher_topic_name', 1)
-        # self.example_custom_publisher_ = rospy.Publisher('/local_example_publisher_topic_name', ExampleMsg, queue_size=1)
-        
+        self.example_custom_publisher_ = self.create_publisher(ExampleMsg, '/local_example_publisher_topic_name', 1)
+
         # ---- ROS - SUBSCRIBERS ---- #
         self.string_subscriber_  = self.create_subscription(String, '/string_topic_name', self.stringSubscriberCallback, 1)
         self.example_subscriber_ = self.create_subscription(Float64MultiArray, '/global_example_subscriber_topic_name', self.exampleSubscriberCallback, 1)
-        # self.example_custom_subscriber_ = rospy.Subscriber('/group/example_subscriber_topic_name', ExampleMsg, self.exampleCustomSubscriberCallback)
-       
+        self.example_custom_subscriber_ = self.create_subscription(ExampleMsg, '/group/example_subscriber_topic_name', self.exampleCustomSubscriberCallback, 1)
+
         # ---- ROS - SERVICE CLIENTS ---- #
         self.example_client_ = self.create_client(SetBool, '/global_example_server_name')
-        # self.example_custom_client_ = rospy.ServiceProxy('/group/example_server_name', ExampleSrv)
+        self.example_custom_client_ = self.create_client(ExampleSrv, '/group/example_server_name')
 
         # # ---- ROS - SERVICE SERVERS ---- #
         self.example_server_ = self.create_service(SetBool, '/global_example_server_name', self.exampleServerCallback)
-        # self.example_server_ = rospy.Service('/global_example_server_name', SetBool, self.exampleServerCallback)
-        # self.example_custom_server_ = rospy.Service('/group/example_server_name', ExampleSrv, self.exampleCustomServerCallback)
+        self.example_custom_server_ = self.create_service(ExampleSrv, '/group/example_server_name', self.exampleCustomServerCallback)
 
         # # ---- ROS - ACTIONS ---- #
         # self.trajectory_client = actionlib.SimpleActionClient('/trajectory_publisher_action_name', FollowJointTrajectoryAction)
@@ -122,25 +122,26 @@ class ExamplePackage(Node):
 #------------------------------------------------- SUBSCRIBER CALLBACKS --------------------------------------------------#
 
     def stringSubscriberCallback(self, data:String):
-    
+
         received_msg = data
         # print(f'Received Message: {received_msg}')
-    
+
         # DO THINGS...
 
     def exampleSubscriberCallback(self, data:Float64MultiArray):
-    
+
         received_msg = data
         print(f'Received Message: {received_msg}')
-    
+
         # DO THINGS...
 
 
-    # def exampleCustomSubscriberCallback(self, data:ExampleMsg):
-        
-    #     received_custom_msg = data
+    def exampleCustomSubscriberCallback(self, data:ExampleMsg):
 
-    #     # DO THINGS...
+        received_custom_msg = data
+        print(f'Received Message: {received_custom_msg}')
+
+        # DO THINGS...
 
 #--------------------------------------------------- SERVER CALLBACKS ----------------------------------------------------#
 
@@ -157,23 +158,22 @@ class ExamplePackage(Node):
 
         return res
 
-    # def exampleCustomServerCallback(self, req:ExampleSrvRequest):
-        
-    #     # Received Request
-    #     received_request = req
-    #     string_value = received_request.string_value
-    #     std_msgs_float = received_request.std_msgs_float
-    #     # ...
-        
-    #     # DO THINGS...
-        
-    #     # Response Filling
-    #     response = ExampleSrvResponse()
-    #     response.int_value = 23
-    #     response.success = True
-    #     # ...
+    def exampleCustomServerCallback(self, req:ExampleSrv.Request, res:ExampleSrv.Response):
 
-    #     return response
+        # Received Request
+        received_request = req
+        string_value = received_request.string_value
+        std_msgs_float = received_request.std_msgs_float
+        # ...
+
+        # DO THINGS...
+
+        # Response Filling
+        res.int_value = 23
+        res.success = True
+        # ...
+
+        return res
 
 #------------------------------------------------ PUBLISH - CALL FUNCTIONS -----------------------------------------------#
 
