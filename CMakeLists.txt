@@ -21,20 +21,22 @@ find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 
-# find_package(rosidl_default_generators REQUIRED)
-
+# Find Messages Dependencies
 find_package(std_msgs REQUIRED)
 find_package(control_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 
+# Find Messages Generation Dependencies
+find_package(rosidl_default_generators REQUIRED)
+
 # Create Cusom Messages and Services
-# rosidl_generate_interfaces(${PROJECT_NAME}
-#   "msg/ExampleMsg.msg"
-#   "msg/ComposedMsg.msg"
-#   "srv/ExampleSrv.srv"
-#   DEPENDENCIES std_msgs control_msgs trajectory_msgs std_srvs
-# )
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/ExampleMsg.msg"
+  "msg/ComposedMsg.msg"
+  "srv/ExampleSrv.srv"
+  DEPENDENCIES std_msgs control_msgs trajectory_msgs std_srvs
+)
 
 # Include C++ Directories
 include_directories(include)

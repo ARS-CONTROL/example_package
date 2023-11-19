@@ -1,4 +1,4 @@
 example_package/ExampleMsg example_msg
 std_msgs/Int32 std_msgs_int
 std_msgs/String std_msgs_string
-float64[] array_value__std_vector_double
+float64[] array_value_std_vector_double
