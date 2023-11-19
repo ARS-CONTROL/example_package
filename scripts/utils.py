@@ -1,11 +1,12 @@
 import os, shutil, rclpy
 from rclpy.node import Node
+from ament_index_python.packages import get_package_share_path
 
 from std_msgs.msg import Float64MultiArray, MultiArrayDimension
 
 #------------------------------------------------------- PATH UTILS ------------------------------------------------------#
 
-def get_ros2_workspace_path() -> str:
+def get_ros2_workspace_path(package_name:str) -> str:
 
     """ Get ROS2 Workspace Path Function """
 
@@ -15,10 +16,8 @@ def get_ros2_workspace_path() -> str:
         current_path = os.path.dirname(current_path)
 
     # Get Path Working on String Slicing
-    print (os.path.dirname(os.path.abspath(__file__)))
-    
-    build_index = os.path.dirname(os.path.abspath(__file__)).find("build")
-    new_path = os.path.dirname(os.path.abspath(__file__))[:build_index-1] if build_index != -1 else None
+    index = str(get_package_share_path(package_name)).find("install")
+    new_path = os.path.dirname(os.path.abspath(__file__))[:index-1] if index != -1 else None
 
     # Assert Paths are Equal
     assert current_path == new_path, f"ROS2 Workspace Path Errors: {current_path} != {new_path}"
@@ -29,7 +28,7 @@ def get_package_path(package_name:str) -> str:
     """ Get Package Path Function """
 
     # Walk from ROS2 Workspace Path
-    for root, dirs, files in os.walk(os.path.join(get_ros2_workspace_path(), 'src')):
+    for root, dirs, files in os.walk(os.path.join(get_ros2_workspace_path(package_name), 'src')):
 
         if package_name in dirs and package_name_in_package_xml(package_name, os.path.join(root, package_name)):
 
