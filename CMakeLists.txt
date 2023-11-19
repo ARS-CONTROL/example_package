@@ -30,11 +30,20 @@ find_package(std_srvs REQUIRED)
 # Find Messages Generation Dependencies
 find_package(rosidl_default_generators REQUIRED)
 
-# Create Cusom Messages and Services
-rosidl_generate_interfaces(${PROJECT_NAME}
+# Set Cusom Messages
+set(msg_files
   "msg/ExampleMsg.msg"
   "msg/ComposedMsg.msg"
+)
+
+# Set Custom Services
+set(srv_files
   "srv/ExampleSrv.srv"
+)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${msg_files}
+  ${srv_files}
   DEPENDENCIES std_msgs control_msgs trajectory_msgs std_srvs
 )
 
