@@ -58,12 +58,12 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 include_directories(include)
 
 # Create C++ Executables
-# add_executable(cpp_executable src/cpp_executable.cpp)
-# ament_target_dependencies(cpp_executable rclcpp std_msgs)
+add_executable(global_parameter_server src/global_parameter_server.cpp)
+ament_target_dependencies(global_parameter_server rclcpp)
 
 # Install C++ Executables
 install(TARGETS
-  # cpp_executable
+  global_parameter_server
   DESTINATION lib/${PROJECT_NAME}
 )
 

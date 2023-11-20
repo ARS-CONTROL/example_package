@@ -1,0 +1,4 @@
+global_parameter_server:
+  ros__parameters:
+    global_string_param: "Global Parameter"
+    global_double_param: 15.3

@@ -91,7 +91,7 @@ def custom_Signal_Handler(package_name):
 
         # Shutdown ROS
         print('Stop Signal Received. Shutting down...')
-        rclpy.shutdown()
+        rclpy.try_shutdown()
 
     return signal_handler
 

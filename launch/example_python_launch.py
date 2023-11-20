@@ -3,12 +3,13 @@ from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
 
-    # Launch Description   
+    # Launch Description
     launch_description = LaunchDescription()
 
     # Example - Arguments
@@ -25,6 +26,11 @@ def generate_launch_description():
 
     # Config File Path
     config = os.path.join(get_package_share_directory('example_package'), 'config','config.yaml')
+
+    # Include Other Launch Files
+    other_package_dir = get_package_share_directory('example_package')
+    included_launch = IncludeLaunchDescription(PythonLaunchDescriptionSource(other_package_dir + '/launch/global_parameter_launch.py'))
+    launch_description.add_action(included_launch)
 
     # Python Node + Parameters + YAML Config File
     example_node = Node(
