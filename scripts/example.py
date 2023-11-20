@@ -5,20 +5,20 @@ import sys, os, signal
 # Import ROS2 Libraries
 import rclpy, pkg_resources
 from rclpy.node import Node
+from rclpy.action import ActionServer, ActionClient
 from ament_index_python.packages import get_package_share_path
 
-# Import ROS Messages and Services
+# Import ROS Messages, Services, Actions
 from builtin_interfaces.msg import Duration
 from std_msgs.msg import String, Float64MultiArray, MultiArrayDimension
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from std_srvs.srv import SetBool
+from control_msgs.action import FollowJointTrajectory
 
-# Import Custom ROS Messages and Services
+# Import Custom ROS Messages, Services, Actions
 from example_package.msg import ExampleMsg, ComposedMsg
 from example_package.srv import ExampleSrv
-
-# import actionlib
-# from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryActionGoal
+from example_package.action import ExampleAction
 
 # Import Utils Functions
 from utils import get_package_path, custom_Signal_Handler
@@ -70,24 +70,24 @@ class ExamplePackage(Node):
         self.example_vector_ = example_vector
 
         # ---- ROS - PARAMETERS ---- #
-        self.example_string_param_ = ''
-        self.example_double_param_ = 0.0
-        self.example_bool_param_   = False
-        self.example_vector_param_ = []
+        self.declare_parameter('example_string_param',  'Default Example')
+        self.declare_parameter('example_double_param_', 1.1)
+        self.declare_parameter('example_bool_param',    False)
+        self.declare_parameter('example_vector_param',  [1.1, 1.1])
 
-        # # ---- LOAD GLOBAL PARAMETERS ---- #
+        # ---- LOAD GLOBAL PARAMETERS ---- #
         # self.example_string_param_ = rospy.get_param('/example_string_param',  default='Default Example')
         # self.example_double_param_ = rospy.get_param('/example_double_param_', default=1.1)
 
-        # # ---- LOAD NODE SPECIFIC PARAMETERS ---- #
+        # ---- LOAD NODE SPECIFIC PARAMETERS ---- #
         # self.example_bool_param_   = rospy.get_param('/example_python_node/example_bool_param', default=True)
         # self.example_vector_param_ = rospy.get_param('/example_cpp_node/example_vector_param',  default=[1.1, 1.1])
 
-        # # ---- LOAD NAMESPACED PARAMETERS ---- #
+        # ---- LOAD NAMESPACED PARAMETERS ---- #
         # self.example_string_param_ = rospy.get_param('/namespace_1/example_string_param', default='Default Example')
         # self.example_double_param_ = rospy.get_param('/namespace_1/example_double_param', default=1.1)
 
-        # # ---- LOAD YAML FILE PARAMETERS ---- #
+        # ---- LOAD YAML FILE PARAMETERS ---- #
         # self.example_string_param_ = rospy.get_param('/yaml_string_param', default='Default Example')
         # self.example_double_param_ = rospy.get_param('/yaml_double_param', default=1.1)
         # self.example_bool_param_   = rospy.get_param('/yaml_bool_param',   default=True)
@@ -105,14 +105,16 @@ class ExamplePackage(Node):
 
         # ---- ROS - SERVICE CLIENTS ---- #
         self.example_client_ = self.create_client(SetBool, '/global_example_server_name')
-        self.example_custom_client_ = self.create_client(ExampleSrv, '/group/example_server_name')
+        self.example_client_ = self.create_client(ExampleSrv, '/group/example_server_name')
 
-        # # ---- ROS - SERVICE SERVERS ---- #
+        # ---- ROS - SERVICE SERVERS ---- #
         self.example_server_ = self.create_service(SetBool, '/global_example_server_name', self.exampleServerCallback)
         self.example_custom_server_ = self.create_service(ExampleSrv, '/group/example_server_name', self.exampleCustomServerCallback)
 
-        # # ---- ROS - ACTIONS ---- #
-        # self.trajectory_client = actionlib.SimpleActionClient('/trajectory_publisher_action_name', FollowJointTrajectoryAction)
+        # ---- ROS - ACTIONS ---- #
+        self.trajectory_action_client_ = ActionClient(self, FollowJointTrajectory, '/trajectory_publisher_action_name')
+        self.example_custom_action_client_ = ActionClient(self, ExampleAction, '/global_example_action_server_name')
+        self.example_custom_action_server_ = ActionServer(self, ExampleAction, '/global_example_action_server_name', self.exampleActionCallback)
 
         # ---- DEBUG PRINT ---- #
         self.get_logger().info(f'Info Print')
@@ -175,6 +177,26 @@ class ExamplePackage(Node):
 
         return res
 
+#--------------------------------------------------- ACTION CALLBACKS ----------------------------------------------------#
+
+    def exampleActionCallback(self, goal_handle):
+
+        # Received Goal
+        # self.get_logger().info('Executing goal...')
+
+        # DO THINGS...
+
+        # Publish Feedback
+        feedback = ExampleAction.Feedback(example_feedback=[1, 10])
+        goal_handle.publish_feedback(feedback)
+
+        # Goal Succeeded
+        goal_handle.succeed()
+
+        # Goal Result Filling
+        result = ExampleAction.Result(example_result=[1, 10, 100])
+        return result
+
 #------------------------------------------------ PUBLISH - CALL FUNCTIONS -----------------------------------------------#
 
     def PublishStringMessage(self):
@@ -213,29 +235,36 @@ class ExamplePackage(Node):
         response = future.result()
         # self.get_logger().info(f'Response: {response}')
 
-    # def CallAction(self):
-    
-    #     # Wait for the Action Server to Start
-    #     rospy.loginfo('Waiting for Action Server to Start')
-    
-    #     self.trajectory_client.wait_for_server()
-    #     rospy.loginfo('Action Server Started, Sending Goal')
+    def CallAction(self):
 
-    #     # ROS Action Goal Filling
-    #     goal = FollowJointTrajectoryActionGoal()
-    #     goal.trajectory.joint_names = ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint', 'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']
-    #     goal.trajectory.points.append(JointTrajectoryPoint())
-    #     goal.trajectory.points[0].positions = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    #     goal.trajectory.points[0].time_from_start = rospy.Duration(5)
+        goal_msg = ExampleAction.Goal()
+        goal_msg.example_request = 1
 
-    #     # Send a Goal to the Action
-    #     self.trajectory_client.send_goal(goal)
-    
-    #     # Wait for the Action to Return
-    #     self.trajectory_client.wait_for_result()
-    
-    #     # Return the Result of Executing the Action
-    #     return self.trajectory_client.get_result()
+        # Wait for the Action Server to Start
+        self.example_custom_action_client_.wait_for_server()
+
+        # Send a Goal to the Action - Asynchronous
+        return self.example_custom_action_client_.send_goal_async(goal_msg)
+
+    def CallTrajectoryAction(self):
+
+        # Wait for the Action Server to Start
+        self.get_logger().info('Waiting for Action Server to Start')
+        self.trajectory_action_client_.wait_for_server()
+
+        # ROS Action Goal Filling
+        goal = FollowJointTrajectory.Goal()
+        goal.trajectory.joint_names = ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint', 'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']
+        goal.trajectory.points.append(JointTrajectoryPoint())
+        goal.trajectory.points[0].positions = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        goal.trajectory.points[0].time_from_start = Duration(sec=5, nanosec=0)
+
+        # Send a Goal to the Action - Synchronous (Blocking - Wait for Result)
+        self.get_logger().info('Action Server Started, Sending Goal')
+        result = self.trajectory_action_client_.send_goal(goal)
+
+        # Return the Result of Executing the Action
+        return result
 
 #---------------------------------------------------- UTILS FUNCTIONS ----------------------------------------------------#
 
@@ -250,8 +279,8 @@ class ExamplePackage(Node):
         # Call a ROS Service Client
         self.CallService()
 
-        # # Call a ROS Action Client
-        # self.CallAction()
+        # Call a ROS Action Client
+        self.CallAction()
 
 #--------------------------------------------------------- MAIN ---------------------------------------------------------#
 

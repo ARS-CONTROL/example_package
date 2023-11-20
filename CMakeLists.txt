@@ -41,9 +41,16 @@ set(srv_files
   "srv/ExampleSrv.srv"
 )
 
+# Set Custom Actions
+set(action_files
+  "action/ExampleAction.action"
+)
+
+# Generate Messages, Services and Actions
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}
   ${srv_files}
+  ${action_files}
   DEPENDENCIES std_msgs control_msgs trajectory_msgs std_srvs
 )
 

@@ -1,0 +1,12 @@
+# Request
+int32 example_request
+
+---
+
+# Result
+int32[] example_result
+
+---
+
+# Feedback
+int32[] example_feedback
