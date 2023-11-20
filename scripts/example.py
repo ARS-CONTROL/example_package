@@ -45,7 +45,7 @@ class ExamplePackage(Node):
 
         # ---- Get Package Share Path ---- #
         share_path = get_package_share_path('example_package')
-        print(f'Share Path: {share_path}')
+        print(f'\n\nShare Path: {share_path}')
 
         # ---- Get Resources Install Path ---- #
         resources_path = pkg_resources.resource_filename('example_package', 'resources')
@@ -56,7 +56,7 @@ class ExamplePackage(Node):
         print(f'Resources List: {resources_list}')
 
         # ---- Get ROS2 Package Path ---- #
-        print(f'Package Path: {get_package_path("example_package")}')
+        print(f'Package Path: {get_package_path("example_package")}\n\n')
 
         # ---- GLOBAL VARIABLES ---- #
         self.example_bool_   = False
@@ -71,27 +71,35 @@ class ExamplePackage(Node):
 
         # ---- ROS - PARAMETERS ---- #
         self.declare_parameter('example_string_param',  'Default Example')
-        self.declare_parameter('example_double_param_', 1.1)
-        self.declare_parameter('example_bool_param',    False)
+        self.declare_parameter('example_double_param',  1.1)
         self.declare_parameter('example_vector_param',  [1.1, 1.1])
+        self.declare_parameter('example_bool_param',    False)
 
-        # ---- LOAD GLOBAL PARAMETERS ---- #
-        # self.example_string_param_ = rospy.get_param('/example_string_param',  default='Default Example')
-        # self.example_double_param_ = rospy.get_param('/example_double_param_', default=1.1)
+        self.declare_parameter('yaml_string_param',     'Default YAML String')
+        self.declare_parameter('yaml_double_param',     1.1)
+        self.declare_parameter('yaml_bool_param',       False)
+        self.declare_parameter('yaml_vector_param',     [1.1, 1.1])
 
-        # ---- LOAD NODE SPECIFIC PARAMETERS ---- #
-        # self.example_bool_param_   = rospy.get_param('/example_python_node/example_bool_param', default=True)
-        # self.example_vector_param_ = rospy.get_param('/example_cpp_node/example_vector_param',  default=[1.1, 1.1])
+        # ---- ROS - USE PARAMETERS ---- #
+        self.example_string_param = self.get_parameter('example_string_param').get_parameter_value().string_value
+        self.example_double_param = self.get_parameter('example_double_param').get_parameter_value().double_value
+        self.example_vector_param = self.get_parameter('example_vector_param').get_parameter_value().double_array_value
+        self.example_bool_param   = self.get_parameter('example_bool_param').get_parameter_value().bool_value
 
-        # ---- LOAD NAMESPACED PARAMETERS ---- #
-        # self.example_string_param_ = rospy.get_param('/namespace_1/example_string_param', default='Default Example')
-        # self.example_double_param_ = rospy.get_param('/namespace_1/example_double_param', default=1.1)
+        self.yaml_string_param    = self.get_parameter('yaml_string_param').get_parameter_value().string_value
+        self.yaml_double_param    = self.get_parameter('yaml_double_param').get_parameter_value().double_value
+        self.yaml_bool_param      = self.get_parameter('yaml_bool_param').get_parameter_value().bool_value
+        self.yaml_vector_param    = self.get_parameter('yaml_vector_param').get_parameter_value().double_array_value
 
-        # ---- LOAD YAML FILE PARAMETERS ---- #
-        # self.example_string_param_ = rospy.get_param('/yaml_string_param', default='Default Example')
-        # self.example_double_param_ = rospy.get_param('/yaml_double_param', default=1.1)
-        # self.example_bool_param_   = rospy.get_param('/yaml_bool_param',   default=True)
-        # self.example_vector_param_ = rospy.get_param('/yaml_vector_param', default=[1.1, 1.1])
+        self.get_logger().info(f'Example String Parameter: {self.example_string_param}')
+        self.get_logger().info(f'Example Double Parameter: {self.example_double_param}')
+        self.get_logger().info(f'Example Vector Parameter: {self.example_vector_param}')
+        self.get_logger().info(f'Example Bool Parameter:   {self.example_bool_param}\n\n')
+
+        self.get_logger().info(f'Example YAML String Parameter: {self.yaml_string_param}')
+        self.get_logger().info(f'Example YAML Double Parameter: {self.yaml_double_param}')
+        self.get_logger().info(f'Example YAML Bool Parameter:   {self.yaml_bool_param}')
+        self.get_logger().info(f'Example YAML Vector Parameter: {self.yaml_vector_param}\n\n')
 
         # ---- ROS - PUBLISHERS ---- #
         self.string_publisher_  = self.create_publisher(String, '/string_topic_name', 1)
@@ -105,7 +113,7 @@ class ExamplePackage(Node):
 
         # ---- ROS - SERVICE CLIENTS ---- #
         self.example_client_ = self.create_client(SetBool, '/global_example_server_name')
-        self.example_client_ = self.create_client(ExampleSrv, '/group/example_server_name')
+        self.example_custom_client_ = self.create_client(ExampleSrv, '/group/example_server_name')
 
         # ---- ROS - SERVICE SERVERS ---- #
         self.example_server_ = self.create_service(SetBool, '/global_example_server_name', self.exampleServerCallback)
@@ -181,6 +189,8 @@ class ExamplePackage(Node):
 
     def exampleActionCallback(self, goal_handle):
 
+        print(f'Type: {type(goal_handle)}')
+
         # Received Goal
         # self.get_logger().info('Executing goal...')
 
@@ -230,10 +240,13 @@ class ExamplePackage(Node):
         self.example_client_.wait_for_service(timeout_sec=1.0)
 
         # Call Service
-        future = self.example_client_.call_async(request)
-        rclpy.spin_until_future_complete(self, future)
-        response = future.result()
+        response = self.example_client_.call(request)
         # self.get_logger().info(f'Response: {response}')
+
+        # Call Service - Asynchronous
+        # future = self.example_client_.call_async(request)
+        # rclpy.spin_until_future_complete(self, future)
+        # response = future.result()
 
     def CallAction(self):
 
