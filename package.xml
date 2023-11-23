@@ -37,6 +37,11 @@
   <!-- Action Dependancies -->
   <depend>action_msgs</depend>
 
+  <!-- External Libraries Dependancies -->
+  <build_depend>eigen3_cmake_module</build_depend>
+  <!-- <depend>moveit_core</depend>
+  <depend>moveit_ros_planning_interface</depend> -->
+
   <!-- Test Dependancies -->
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

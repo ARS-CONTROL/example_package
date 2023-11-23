@@ -5,7 +5,6 @@
 
 ## In Development (TODO)
 
-* C++ Code
 * MoveIt
 
 ## Package Description
