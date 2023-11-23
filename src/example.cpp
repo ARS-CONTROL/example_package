@@ -8,38 +8,38 @@ ExamplePackage::ExamplePackage(
 {
 
     // ---- LOAD GLOBAL PARAMETERS ---- //
-    // if (!nh.param<std::string>("/example_string_param", example_string_param_, "Default Example")) 
-    //     ROS_ERROR_STREAM("Failed to read the \"example_string_param parameter\" | Using Default: " << example_string_param_);
+    if (!get_parameter_or("/example_string_param", example_string_param_, std::string("Default Example"))) 
+        RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_string_param parameter\" | Using Default: " << example_string_param_);
 
-    // if (!nh.param<double>("/example_double_param", example_double_param_, 1.1)) 
-    //     ROS_ERROR_STREAM("Failed to read the \"example_double_param parameter\" | Using Default: " << example_double_param_);
+    if (!get_parameter_or("/example_double_param", example_double_param_, 1.1)) 
+        RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_double_param parameter\" | Using Default: " << example_double_param_);
 
     // ---- LOAD NODE SPECIFIC PARAMETERS ---- //
-    //  if (!nh.param<bool>("/example_cpp_node/example_bool_param", example_bool_param_, true)) 
-    //     ROS_ERROR_STREAM("Failed to read the \"example_bool_param parameter\" | Using Default: " << example_bool_param_);
+     if (!get_parameter_or("/example_cpp_node/example_bool_param", example_bool_param_, true)) 
+        RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_bool_param parameter\" | Using Default: " << example_bool_param_);
 
-    // if (!nh.param<std::vector<double>>("/example_cpp_node/example_vector_param", example_vector_param_, {1.1, 1.1})) 
-    //     ROS_ERROR_STREAM("Failed to read the \"example_vector_param parameter\" | Using Default: " << example_vector_param_[0] << ", " << example_vector_param_[1]);
+    if (!get_parameter_or("/example_cpp_node/example_vector_param", example_vector_param_, {1.1, 1.1})) 
+        RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_vector_param parameter\" | Using Default: " << example_vector_param_[0] << ", " << example_vector_param_[1]);
 
     // ---- LOAD NAMESPACED PARAMETERS ---- //
-    // if (!nh.param<std::string>("/namespace_1/example_string_param", example_string_param_, "Default Example")) 
-    //     ROS_ERROR_STREAM("Failed to read the \"example_string_param parameter\" | Using Default: " << example_string_param_);
+    if (!get_parameter_or("/namespace_1/example_string_param", example_string_param_, std::string("Default Example"))) 
+        RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_string_param parameter\" | Using Default: " << example_string_param_);
 
-    // if (!nh.param<double>("/namespace_1/example_double_param", example_double_param_, 1.1)) 
-    //     ROS_ERROR_STREAM("Failed to read the \"example_double_param parameter\" | Using Default: " << example_double_param_);
+    if (!get_parameter_or("/namespace_1/example_double_param", example_double_param_, 1.1)) 
+        RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_double_param parameter\" | Using Default: " << example_double_param_);
 
     // ---- LOAD YAML FILE PARAMETERS ---- //
-    // if (!nh.param<std::string>("/yaml_string_param", example_string_param_, "Default Example")) 
-    //     ROS_ERROR_STREAM("Failed to read the \"yaml_string_param parameter\" | Using Default: " << example_string_param_);
+    if (!get_parameter_or("/yaml_string_param", example_string_param_, std::string("Default Example"))) 
+        RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"yaml_string_param parameter\" | Using Default: " << example_string_param_);
 
-    // if (!nh.param<double>("/yaml_double_param", example_double_param_, 1.1)) 
-    //     ROS_ERROR_STREAM("Failed to read the \"yaml_double_param parameter\" | Using Default: " << example_double_param_);
+    if (!get_parameter_or("/yaml_double_param", example_double_param_, 1.1)) 
+        RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"yaml_double_param parameter\" | Using Default: " << example_double_param_);
 
-    //  if (!nh.param<bool>("/yaml_bool_param", example_bool_param_, true)) 
-    //     ROS_ERROR_STREAM("Failed to read the \"yaml_bool_param parameter\" | Using Default: " << example_bool_param_);
+     if (!get_parameter_or("/yaml_bool_param", example_bool_param_, true)) 
+        RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"yaml_bool_param parameter\" | Using Default: " << example_bool_param_);
 
-    // if (!nh.param<std::vector<double>>("/yaml_vector_param", example_vector_param_, {1.1, 1.1})) 
-    //     ROS_ERROR_STREAM("Failed to read the \"yaml_vector_param parameter\" | Using Default: " << example_vector_param_[0] << ", " << example_vector_param_[1]);
+    if (!get_parameter_or("/yaml_vector_param", example_vector_param_, {1.1, 1.1})) 
+        RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"yaml_vector_param parameter\" | Using Default: " << example_vector_param_[0] << ", " << example_vector_param_[1]);
 
     // ---- ROS - PUBLISHERS ---- //
     string_publisher_          = create_publisher<std_msgs::msg::String>("/string_topic_name", 1);
