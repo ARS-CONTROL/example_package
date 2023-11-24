@@ -3,10 +3,6 @@
 * ROS Foxy
 * [Official ROS 2 Tutorials](https://docs.ros.org/en/foxy/Tutorials.html)
 
-## In Development (TODO)
-
-* MoveIt
-
 ## Package Description
 
 This package contains an example of a ROS 2 C++ or Python Code.
