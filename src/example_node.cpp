@@ -1,6 +1,6 @@
 #include "example_package/example.h"
 
-void UR_Stop_Signal_Handler(int sig) {
+void UR_Stop_Signal_Handler(int) {
 
     // Start ROS Node
     rclcpp::NodeOptions options;
@@ -25,7 +25,7 @@ void UR_Stop_Signal_Handler(int sig) {
 
 }
 
-void custom_Signal_Handler(int sig) {
+void custom_Signal_Handler(int) {
 
     // DO THINGS ...
 
