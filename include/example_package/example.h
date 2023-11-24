@@ -53,7 +53,7 @@ using namespace std::chrono_literals;
 #define INT_DEFINITION 10
 #define STRING_DEFINITION "String Definition"
 
-class ExamplePackage : public rclcpp::Node {
+class ExamplePackage : public rclcpp::Node, public std::enable_shared_from_this<ExamplePackage> {
 
     public:
     
@@ -61,6 +61,7 @@ class ExamplePackage : public rclcpp::Node {
 
       ~ExamplePackage();
 
+      void initializeRobotModelLoader(std::shared_ptr<ExamplePackage> node);
       void spinner(void);
 
     private:
@@ -109,7 +110,7 @@ class ExamplePackage : public rclcpp::Node {
         void resultCallback(const rclcpp_action::ClientGoalHandle<control_msgs::action::FollowJointTrajectory>::WrappedResult & result);
 
         // ---- MoveIt! ROBOT MODEL ---- //
-        robot_model_loader::RobotModelLoader *robot_model_loader_;
+        robot_model_loader::RobotModelLoader * robot_model_loader_;
         moveit::core::RobotModelPtr kinematic_model_;
         moveit::core::RobotStatePtr kinematic_state_;
         moveit::core::JointModelGroup *joint_model_group_;
@@ -117,14 +118,14 @@ class ExamplePackage : public rclcpp::Node {
         Eigen::MatrixXd J_;
 
         // ---- KINEMATIC FUNCTIONS ---- //
-        Eigen::Matrix4d computeFK (std::vector<double> joint_position, std::vector<double> joint_velocity);
-        Eigen::MatrixXd computeArmJacobian (std::vector<double> joint_position, std::vector<double> joint_velocity);
-        Matrix6d getEE_RotationMatrix (std::vector<double> joint_position, std::vector<double> joint_velocity);
+        Eigen::Matrix4d computeFK(std::vector<double> joint_position, std::vector<double> joint_velocity);
+        Eigen::MatrixXd computeArmJacobian(std::vector<double> joint_position, std::vector<double> joint_velocity);
+        Matrix6d getEE_RotationMatrix(std::vector<double> joint_position, std::vector<double> joint_velocity);
 
         // ---- PUBLISH - CALL FUNCTIONS ---- //
-        void PublishMessage (void);
-        void CallService (void);
-        void CallAction (void);
+        void PublishMessage(void);
+        void CallService(void);
+        void CallAction(void);
 
         // ---- USEFUL FUNCTIONS ---- //
         int getSign(double data);

@@ -49,16 +49,18 @@ int main(int argc, char **argv) {
     std::string example_string = "example_data";
     std::vector<double> example_vector = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
 
-    ExamplePackage *ep = new ExamplePackage(example_string, example_vector);
+    // ExamplePackage *ep = new ExamplePackage(example_string, example_vector);
+    std::shared_ptr<ExamplePackage> node = std::make_shared<ExamplePackage>(example_string, example_vector);
+
+    // Initialize the robot_model_loader_
+    node -> initializeRobotModelLoader(node);
 
     while (rclcpp::ok())
     {
 
-        ep -> spinner();
+        node -> spinner();
 
     }
-
-    delete ep;
 
 return 0;
 

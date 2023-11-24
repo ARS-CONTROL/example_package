@@ -2,8 +2,7 @@
 
 //----------------------------------------------------- CONSTRUCTOR -----------------------------------------------------//
 
-ExamplePackage::ExamplePackage(
-    std::string example_data, std::vector<double> example_vector):
+ExamplePackage::ExamplePackage(std::string example_data, std::vector<double> example_vector):
     Node ("example_node"), example_string_(example_data), example_vector_(example_vector)
 {
 
@@ -62,14 +61,6 @@ ExamplePackage::ExamplePackage(
     // ---- ROS - ACTIONS ---- //
     trajectory_action_client_ = rclcpp_action::create_client<control_msgs::action::FollowJointTrajectory>(this, "/trajectory_publisher_action_name");
 
-    // ---- MoveIt Robot Model ---- //
-    robot_model_loader_ = new robot_model_loader::RobotModelLoader(shared_from_this(), std::string("robot_description"));
-    kinematic_model_    = robot_model_loader_ -> getModel();
-    kinematic_state_    = moveit::core::RobotStatePtr(new moveit::core::RobotState(kinematic_model_));
-    kinematic_state_    -> setToDefaultValues();
-    joint_model_group_  = kinematic_model_ -> getJointModelGroup("manipulator");
-    joint_names_        = joint_model_group_ -> getJointModelNames();
-
     // ---- DEBUG PRINT ---- //
     RCLCPP_INFO_STREAM(get_logger(), "Info Print");
     RCLCPP_WARN_STREAM(get_logger(), "Warn Print");
@@ -84,6 +75,20 @@ ExamplePackage::ExamplePackage(
 //----------------------------------------------------- DESTRUCTOR ------------------------------------------------------//
 
 ExamplePackage::~ExamplePackage() {}
+
+//------------------------------------------------------- MOVEIT --------------------------------------------------------//
+
+void ExamplePackage::initializeRobotModelLoader(std::shared_ptr<ExamplePackage> node) {
+
+    // ---- MoveIt Robot Model ---- //
+    robot_model_loader_ = new robot_model_loader::RobotModelLoader(node, "robot_description");
+    kinematic_model_    = robot_model_loader_ -> getModel();
+    kinematic_state_    = moveit::core::RobotStatePtr(new moveit::core::RobotState(kinematic_model_));
+    kinematic_state_    -> setToDefaultValues();
+    joint_model_group_  = kinematic_model_ -> getJointModelGroup("manipulator");
+    joint_names_        = joint_model_group_ -> getJointModelNames();
+
+}
 
 //------------------------------------------------ SUBSCRIBER CALLBACKS -------------------------------------------------//
 
@@ -149,7 +154,7 @@ bool ExamplePackage::exampleCustomServerCallback(const std::shared_ptr<example_p
 
 //------------------------------------------------- KINEMATIC FUNCTIONS -------------------------------------------------//
 
-Eigen::Matrix4d ExamplePackage::computeFK (std::vector<double> joint_position, std::vector<double> joint_velocity) {
+Eigen::Matrix4d ExamplePackage::computeFK(std::vector<double> joint_position, std::vector<double> joint_velocity) {
 
     /* Compute Forward Kinematic */
 
@@ -184,7 +189,7 @@ Eigen::Matrix4d ExamplePackage::computeFK (std::vector<double> joint_position, s
 
 }
 
-Eigen::MatrixXd ExamplePackage::computeArmJacobian (std::vector<double> joint_position, std::vector<double> joint_velocity) {
+Eigen::MatrixXd ExamplePackage::computeArmJacobian(std::vector<double> joint_position, std::vector<double> joint_velocity) {
 
     /* Compute Manipulator Jacobian */
 
@@ -207,7 +212,7 @@ Eigen::MatrixXd ExamplePackage::computeArmJacobian (std::vector<double> joint_po
     return Eigen::MatrixXd::Identity(6,6);
 }
 
-Matrix6d ExamplePackage::getEE_RotationMatrix (std::vector<double> joint_position, std::vector<double> joint_velocity) {
+Matrix6d ExamplePackage::getEE_RotationMatrix(std::vector<double> joint_position, std::vector<double> joint_velocity) {
 
     /* Get End-Effector Rotation Matrix */
 
@@ -239,7 +244,7 @@ Matrix6d ExamplePackage::getEE_RotationMatrix (std::vector<double> joint_positio
 
 //----------------------------------------------- PUBLISH - CALL FUNCTIONS ----------------------------------------------//
 
-void ExamplePackage::PublishMessage (void) {
+void ExamplePackage::PublishMessage(void) {
 
     // ROS Message Creation
     trajectory_msgs::msg::JointTrajectory trajectory_temp;
@@ -255,7 +260,7 @@ void ExamplePackage::PublishMessage (void) {
 
 }
 
-void ExamplePackage::CallService (void) {
+void ExamplePackage::CallService(void) {
 
     // Wait for Service to Start
     if (!example_client_ -> wait_for_service(1s)) {RCLCPP_ERROR(get_logger(), "Service \"/global_example_server_name\" Not Available");}
@@ -276,7 +281,7 @@ void ExamplePackage::CallService (void) {
 
 }
 
-void ExamplePackage::CallAction (void) {
+void ExamplePackage::CallAction(void) {
 
     // Wait for Service to Start
     if (!trajectory_action_client_ -> wait_for_action_server()) {RCLCPP_ERROR(get_logger(), "Action Service \"/trajectory_publisher_action_name\" Not Available");}
