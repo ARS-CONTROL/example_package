@@ -160,32 +160,29 @@ Eigen::Matrix4d ExamplePackage::computeFK(std::vector<double> joint_position, st
 
     rclcpp::spin_some(this->get_node_base_interface());
 
-    // //Update MoveIt! Kinematic Model
-    // kinematic_state_ -> setJointGroupPositions  (joint_model_group_, joint_position);
-    // kinematic_state_ -> setJointGroupVelocities (joint_model_group_, joint_velocity);
-    // kinematic_state_ -> enforceBounds();
+    // Update MoveIt! Kinematic Model
+    kinematic_state_ -> setJointGroupPositions(joint_model_group_, joint_position);
+    kinematic_state_ -> setJointGroupVelocities(joint_model_group_, joint_velocity);
+    kinematic_state_ -> enforceBounds();
 
-    // // Computing the actual position of the end-effector using Forward Kinematic respect "world"
-    // const Eigen::Affine3d& end_effector_state = kinematic_state_ -> getGlobalLinkTransform("tool0");
+    // Computing the actual position of the end-effector using Forward Kinematic with respect to "world"
+    const auto& end_effector_state = kinematic_state_->getGlobalLinkTransform("tool0");
 
-    // // Get the Translation Vector and Rotation Matrix
-    // Eigen::Vector3d translation_vector = end_effector_state.translation();
-    // Eigen::Matrix3d rotation_matrix    = end_effector_state.rotation();
+    // Get the Translation Vector and Rotation Matrix
+    Eigen::Vector3d translation_vector = end_effector_state.translation();
+    Eigen::Matrix3d rotation_matrix    = end_effector_state.rotation();
 
-    // //Transformation Matrix
-    // Eigen::Matrix4d transformation_matrix;
-    // transformation_matrix.setZero();
+    // Transformation Matrix
+    Eigen::Matrix4d transformation_matrix;
+    transformation_matrix.setZero();
 
-    // //Set Identity to make bottom row of Matrix 0,0,0,1
-    // transformation_matrix.setIdentity();
+    // Set Identity to make the bottom row of the Matrix 0,0,0,1
+    transformation_matrix.setIdentity();
 
-    // transformation_matrix.block<3,3>(0,0) = rotation_matrix;
-    // transformation_matrix.block<3,1>(0,3) = translation_vector;
+    transformation_matrix.block<3, 3>(0, 0) = rotation_matrix;
+    transformation_matrix.block<3, 1>(0, 3) = translation_vector;
 
-    // return transformation_matrix;
-    auto a = joint_position;
-    auto b = joint_velocity;
-    return Eigen::Matrix4d::Identity();
+    return transformation_matrix;
 
 }
 
@@ -193,53 +190,48 @@ Eigen::MatrixXd ExamplePackage::computeArmJacobian(std::vector<double> joint_pos
 
     /* Compute Manipulator Jacobian */
 
-    // ros::spinOnce();
+    rclcpp::spin_some(this->get_node_base_interface());
 
-    // //Update MoveIt! Kinematic Model
-    // kinematic_state_ -> setJointGroupPositions  (joint_model_group_, joint_position);
-    // kinematic_state_ -> setJointGroupVelocities (joint_model_group_, joint_velocity);
-    // kinematic_state_ -> enforceBounds();
+    //Update MoveIt! Kinematic Model
+    kinematic_state_ -> setJointGroupPositions  (joint_model_group_, joint_position);
+    kinematic_state_ -> setJointGroupVelocities (joint_model_group_, joint_velocity);
+    kinematic_state_ -> enforceBounds();
 
-    // // Computing the Jacobian of the arm
-    // Eigen::Vector3d reference_point_position(0.0,0.0,0.0);
-    // Eigen::MatrixXd jacobian;
+    // Computing the Jacobian of the arm
+    Eigen::Vector3d reference_point_position(0.0,0.0,0.0);
+    Eigen::MatrixXd jacobian;
 
-    // kinematic_state_ -> getJacobian(joint_model_group_, kinematic_state_->getLinkModel(joint_model_group_->getLinkModelNames().back()), reference_point_position, jacobian);
+    kinematic_state_ -> getJacobian(joint_model_group_, kinematic_state_->getLinkModel(joint_model_group_->getLinkModelNames().back()), reference_point_position, jacobian);
 
-    // return jacobian;
-    auto a = joint_position;
-    auto b = joint_velocity;
-    return Eigen::MatrixXd::Identity(6,6);
+    return jacobian;
 }
 
 Matrix6d ExamplePackage::getEE_RotationMatrix(std::vector<double> joint_position, std::vector<double> joint_velocity) {
 
     /* Get End-Effector Rotation Matrix */
 
-    // ros::spinOnce();
+    rclcpp::spin_some(this->get_node_base_interface());
 
-    // //Update MoveIt! Kinematic Model
-    // kinematic_state_ -> setJointGroupPositions  (joint_model_group_, joint_position);
-    // kinematic_state_ -> setJointGroupVelocities (joint_model_group_, joint_velocity);
-    // kinematic_state_ -> enforceBounds();
+    //Update MoveIt! Kinematic Model
+    kinematic_state_ -> setJointGroupPositions  (joint_model_group_, joint_position);
+    kinematic_state_ -> setJointGroupVelocities (joint_model_group_, joint_velocity);
+    kinematic_state_ -> enforceBounds();
 
-    // // Computing the actual position of the end-effector using Forward Kinematic respect "world"
-    // const Eigen::Affine3d& end_effector_state = kinematic_state_ -> getGlobalLinkTransform("tool0");
+    // Computing the actual position of the end-effector using Forward Kinematic respect "world"
+    const Eigen::Affine3d& end_effector_state = kinematic_state_ -> getGlobalLinkTransform("tool0");
 
-    // // Rotation Matrix 6x6
-    // Matrix6d rotation_matrix;
-    // rotation_matrix.setZero();
+    // Rotation Matrix 6x6
+    Matrix6d rotation_matrix;
+    rotation_matrix.setZero();
 
-    // rotation_matrix.topLeftCorner(3, 3)     = end_effector_state.rotation();
-    // rotation_matrix.bottomRightCorner(3, 3) = end_effector_state.rotation();
+    rotation_matrix.topLeftCorner(3, 3)     = end_effector_state.rotation();
+    rotation_matrix.bottomRightCorner(3, 3) = end_effector_state.rotation();
 
     // Eigen::Vector3d euler_angles = end_effector_state.rotation().eulerAngles(0, 1, 2);
     // Eigen::Quaterniond rotation_quaternion(end_effector_state.rotation());
 
-    // return rotation_matrix;
-    auto a = joint_position;
-    auto b = joint_velocity;
-    return Matrix6d::Identity();
+    return rotation_matrix;
+
 }
 
 //----------------------------------------------- PUBLISH - CALL FUNCTIONS ----------------------------------------------//
