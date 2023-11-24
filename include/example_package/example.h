@@ -24,9 +24,9 @@
 #include "example_package/action/example_action.hpp"
 
 // Include MoveIt! Libraries
-// #include <moveit/robot_model_loader/robot_model_loader.h>
-// #include <moveit/robot_model/robot_model.h>
-// #include <moveit/robot_state/robot_state.h>
+#include <moveit/robot_model_loader/robot_model_loader.h>
+#include <moveit/robot_model/robot_model.h>
+#include <moveit/robot_state/robot_state.h>
 
 // Include Eigen Libraries
 #include <Eigen/Eigen>
@@ -109,10 +109,10 @@ class ExamplePackage : public rclcpp::Node {
         void resultCallback(const rclcpp_action::ClientGoalHandle<control_msgs::action::FollowJointTrajectory>::WrappedResult & result);
 
         // ---- MoveIt! ROBOT MODEL ---- //
-        // robot_model_loader::RobotModelLoader robot_model_loader_;
-        // robot_model::RobotModelPtr kinematic_model_;
-        // robot_state::RobotStatePtr kinematic_state_;
-        // const robot_state::JointModelGroup *joint_model_group_;
+        robot_model_loader::RobotModelLoader *robot_model_loader_;
+        moveit::core::RobotModelPtr kinematic_model_;
+        moveit::core::RobotStatePtr kinematic_state_;
+        moveit::core::JointModelGroup *joint_model_group_;
         std::vector<std::string> joint_names_;
         Eigen::MatrixXd J_;
 

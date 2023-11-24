@@ -63,12 +63,12 @@ ExamplePackage::ExamplePackage(
     trajectory_action_client_ = rclcpp_action::create_client<control_msgs::action::FollowJointTrajectory>(this, "/trajectory_publisher_action_name");
 
     // ---- MoveIt Robot Model ---- //
-    // robot_model_loader_ = robot_model_loader::RobotModelLoader("robot_description");
-    // kinematic_model_    = robot_model_loader_.getModel();
-    // kinematic_state_    = robot_state::RobotStatePtr(new robot_state::RobotState(kinematic_model_));
-    // kinematic_state_    -> setToDefaultValues();
-    // joint_model_group_  = kinematic_model_   -> getJointModelGroup("manipulator");
-    // joint_names_        = joint_model_group_ -> getJointModelNames();
+    robot_model_loader_ = new robot_model_loader::RobotModelLoader(shared_from_this(), std::string("robot_description"));
+    kinematic_model_    = robot_model_loader_ -> getModel();
+    kinematic_state_    = moveit::core::RobotStatePtr(new moveit::core::RobotState(kinematic_model_));
+    kinematic_state_    -> setToDefaultValues();
+    joint_model_group_  = kinematic_model_ -> getJointModelGroup("manipulator");
+    joint_names_        = joint_model_group_ -> getJointModelNames();
 
     // ---- DEBUG PRINT ---- //
     RCLCPP_INFO_STREAM(get_logger(), "Info Print");

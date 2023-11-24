@@ -36,8 +36,8 @@ find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 # MoveIt! Dependencies
-# find_package(moveit_core REQUIRED)
-# find_package(moveit_ros_planning_interface REQUIRED)
+find_package(moveit_core REQUIRED)
+find_package(moveit_ros_planning_interface REQUIRED)
 
 # Set Cusom Messages
 set(msg_files
@@ -69,6 +69,8 @@ include_directories(
   ${rclcpp_INCLUDE_DIRS}
   ${rclcpp_action_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
+  ${moveit_core_INCLUDE_DIRS}
+  ${moveit_ros_planning_interface_INCLUDE_DIRS}
   ${${PROJECT_NAME}_INCLUDE_DIRS}
   )
 
@@ -77,7 +79,7 @@ add_executable(global_parameter_server src/global_parameter_server.cpp)
 ament_target_dependencies(global_parameter_server rclcpp)
 
 add_executable(example_cpp_node src/example_node.cpp src/example.cpp)
-ament_target_dependencies(example_cpp_node rclcpp rclcpp_action)
+ament_target_dependencies(example_cpp_node rclcpp rclcpp_action moveit_core moveit_ros_planning_interface)
 rosidl_target_interfaces(example_cpp_node ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
 # Install C++ Executables
