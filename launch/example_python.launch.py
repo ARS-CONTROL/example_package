@@ -63,7 +63,7 @@ def generate_launch_description():
 
     # Include Other Launch Files
     other_package_dir = get_package_share_directory('example_package')
-    included_launch = IncludeLaunchDescription(PythonLaunchDescriptionSource(other_package_dir + '/launch/global_parameter.launch.py'))
+    included_launch = IncludeLaunchDescription(PythonLaunchDescriptionSource(other_package_dir + '/launch/global_parameter.launch.py'), launch_arguments={'example_global_param':'true'}.items())
     launch_description.add_action(included_launch)
 
     # Config File Path

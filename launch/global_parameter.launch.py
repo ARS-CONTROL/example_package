@@ -1,5 +1,6 @@
 import os
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 
@@ -7,6 +8,10 @@ def generate_launch_description():
 
     # Launch Description
     launch_description = LaunchDescription()
+
+    # Launch Description - Add Arguments
+    example_global_param = DeclareLaunchArgument('example_global_param', default_value='false')
+    launch_description.add_action(example_global_param)
 
     # Global Config File Path
     global_parameters = os.path.join(get_package_share_directory('example_package'), 'config', 'global_config.yaml')

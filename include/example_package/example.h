@@ -66,7 +66,7 @@ class ExamplePackage : public rclcpp::Node, public std::enable_shared_from_this<
 
     private:
 
-        // ---- GLOBAL VARIABLES ---- //
+        // Global Variables
         bool example_bool_ = false;
         int example_int_ = 100;
         std::string example_string_ = "Default";
@@ -74,18 +74,18 @@ class ExamplePackage : public rclcpp::Node, public std::enable_shared_from_this<
         Vector6d example_eigen_vector_;
         example_struct example_struct_;
 
-        // ---- ROS - PARAMETERS ---- //
+        // ROS2 Parameters
         std::string example_string_param_;
         double example_double_param_;
         bool example_bool_param_;
         std::vector<double> example_vector_param_;
 
-        // ---- ROS - PUBLISHERS ---- //
+        // ROS2 Publishers
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr string_publisher_;
         rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr example_publisher_;
         rclcpp::Publisher<example_package::msg::ExampleMsg>::SharedPtr example_custom_publisher_;
 
-        // ---- ROS - SUBSCRIBERS & CALLBACKS ---- //
+        // ROS2 Subscribers & Callbacks
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr string_subscriber_;
         rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr example_subscriber_;
         rclcpp::Subscription<example_package::msg::ExampleMsg>::SharedPtr example_custom_subscriber_;
@@ -93,23 +93,23 @@ class ExamplePackage : public rclcpp::Node, public std::enable_shared_from_this<
         void exampleSubscriberCallback(const std_msgs::msg::Float64MultiArray::SharedPtr msg);
         void exampleCustomSubscriberCallback(const example_package::msg::ExampleMsg::SharedPtr msg);
 
-        // ---- ROS - SERVICE CLIENTS ---- //
+        // ROS2 Service Clients
         rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr example_client_;
         rclcpp::Client<example_package::srv::ExampleSrv>::SharedPtr example_custom_client_;
 
-        // ---- ROS - SERVICE SERVERS & CALLBACKS ---- //
+        // ROS2 Service Servers & Callbacks
         rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr example_server_;
         rclcpp::Service<example_package::srv::ExampleSrv>::SharedPtr example_custom_server_;
         bool exampleServerCallback(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, std::shared_ptr<std_srvs::srv::SetBool::Response> response);
         bool exampleCustomServerCallback(const std::shared_ptr<example_package::srv::ExampleSrv::Request> request, std::shared_ptr<example_package::srv::ExampleSrv::Response> response);
 
-        // ---- ROS - ACTION CLIENT ---- //
+        // ROS2 Action Clients
         rclcpp_action::Client<control_msgs::action::FollowJointTrajectory>::SharedPtr trajectory_action_client_;
         void goalResponseCallback(std::shared_future<rclcpp_action::ClientGoalHandle<control_msgs::action::FollowJointTrajectory>::SharedPtr> future);
         void feedbackCallback(rclcpp_action::ClientGoalHandle<control_msgs::action::FollowJointTrajectory>::SharedPtr, const std::shared_ptr<const control_msgs::action::FollowJointTrajectory::Feedback> feedback);
         void resultCallback(const rclcpp_action::ClientGoalHandle<control_msgs::action::FollowJointTrajectory>::WrappedResult & result);
 
-        // ---- MoveIt! ROBOT MODEL ---- //
+        // MoveIt! Robot Model
         robot_model_loader::RobotModelLoader * robot_model_loader_;
         moveit::core::RobotModelPtr kinematic_model_;
         moveit::core::RobotStatePtr kinematic_state_;
@@ -117,17 +117,17 @@ class ExamplePackage : public rclcpp::Node, public std::enable_shared_from_this<
         std::vector<std::string> joint_names_;
         Eigen::MatrixXd J_;
 
-        // ---- KINEMATIC FUNCTIONS ---- //
+        // Kinematics Functions
         Eigen::Matrix4d computeFK(std::vector<double> joint_position, std::vector<double> joint_velocity);
         Eigen::MatrixXd computeArmJacobian(std::vector<double> joint_position, std::vector<double> joint_velocity);
         Matrix6d getEE_RotationMatrix(std::vector<double> joint_position, std::vector<double> joint_velocity);
 
-        // ---- PUBLISH - CALL FUNCTIONS ---- //
+        // Publish - Call Functions
         void PublishMessage(void);
         void CallService(void);
         void CallAction(void);
 
-        // ---- USEFUL FUNCTIONS ---- //
+        // Useful Functions
         int getSign(double data);
 
 };

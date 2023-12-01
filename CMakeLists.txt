@@ -72,7 +72,7 @@ include_directories(
   ${moveit_core_INCLUDE_DIRS}
   ${moveit_ros_planning_interface_INCLUDE_DIRS}
   ${${PROJECT_NAME}_INCLUDE_DIRS}
-  )
+)
 
 # Create C++ Executables
 add_executable(global_parameter_server src/global_parameter_server.cpp)
