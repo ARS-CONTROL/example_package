@@ -64,6 +64,10 @@ class ExamplePackage : public rclcpp::Node, public std::enable_shared_from_this<
       void initializeRobotModelLoader(std::shared_ptr<ExamplePackage> node);
       void spinner(void);
 
+      // ROS2 Rate
+      double ros_rate_ = 500.00;
+      rclcpp::Rate ros_rate = rclcpp::Rate(ros_rate_);
+
     private:
 
         // Global Variables

@@ -6,38 +6,63 @@ ExamplePackage::ExamplePackage(std::string example_data, std::vector<double> exa
     Node ("example_node"), example_string_(example_data), example_vector_(example_vector)
 {
 
+    // Allow Undeclared Parameters
+    // auto node_options = get_node_options();
+    // node_options.allow_undeclared_parameters(true);
+    // node_options.automatically_declare_parameters_from_overrides(true);
+
+    // ---- DECLARE PARAMETERS ---- //
+
+    // Example: Declare parameters explicitly
+    declare_parameter<std::string>("example_string_param", "Default Example");
+    declare_parameter<double>("example_double_param", 1.1);
+
+    // Example: Declare parameters explicitly with a namespace
+    declare_parameter<bool>("example_cpp_node.example_bool_param", true);
+    declare_parameter<std::vector<double>>("example_cpp_node.example_vector_param", {1.1, 1.1});
+
+    // Example: Declare parameters explicitly with a namespace
+    declare_parameter<std::string>("namespace_1.example_string_param", "Default Example");
+    declare_parameter<double>("namespace_1.example_double_param", 1.1);
+
+    // Example: Declare parameters explicitly
+    declare_parameter<std::string>("yaml_string_param", "Default Example");
+    declare_parameter<double>("yaml_double_param", 1.1);
+    declare_parameter<bool>("yaml_bool_param", true);
+    declare_parameter<std::vector<double>>("yaml_vector_param", {1.1, 1.1});
+
     // ---- LOAD GLOBAL PARAMETERS ---- //
-    if (!get_parameter_or("/example_string_param", example_string_param_, std::string("Default Example"))) 
+    if (!get_parameter_or("example_string_param", example_string_param_, std::string("Default Example"))) 
         RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_string_param parameter\" | Using Default: " << example_string_param_);
 
-    if (!get_parameter_or("/example_double_param", example_double_param_, 1.1)) 
+    if (!get_parameter_or("example_double_param", example_double_param_, 1.1)) 
         RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_double_param parameter\" | Using Default: " << example_double_param_);
 
     // ---- LOAD NODE SPECIFIC PARAMETERS ---- //
-     if (!get_parameter_or("/example_cpp_node/example_bool_param", example_bool_param_, true)) 
+     if (!get_parameter_or("example_cpp_node.example_bool_param", example_bool_param_, true)) 
         RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_bool_param parameter\" | Using Default: " << example_bool_param_);
 
-    if (!get_parameter_or("/example_cpp_node/example_vector_param", example_vector_param_, {1.1, 1.1})) 
+    if (!get_parameter_or("example_cpp_node.example_vector_param", example_vector_param_, {1.1, 1.1})) 
         RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_vector_param parameter\" | Using Default: " << example_vector_param_[0] << ", " << example_vector_param_[1]);
 
     // ---- LOAD NAMESPACED PARAMETERS ---- //
-    if (!get_parameter_or("/namespace_1/example_string_param", example_string_param_, std::string("Default Example"))) 
+    if (!get_parameter_or("namespace_1.example_string_param", example_string_param_, std::string("Default Example"))) 
         RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_string_param parameter\" | Using Default: " << example_string_param_);
 
-    if (!get_parameter_or("/namespace_1/example_double_param", example_double_param_, 1.1)) 
+    if (!get_parameter_or("namespace_1.example_double_param", example_double_param_, 1.1)) 
         RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"example_double_param parameter\" | Using Default: " << example_double_param_);
 
     // ---- LOAD YAML FILE PARAMETERS ---- //
-    if (!get_parameter_or("/yaml_string_param", example_string_param_, std::string("Default Example"))) 
+    if (!get_parameter_or("yaml_string_param", example_string_param_, std::string("Default Example"))) 
         RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"yaml_string_param parameter\" | Using Default: " << example_string_param_);
 
-    if (!get_parameter_or("/yaml_double_param", example_double_param_, 1.1)) 
+    if (!get_parameter_or("yaml_double_param", example_double_param_, 1.1)) 
         RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"yaml_double_param parameter\" | Using Default: " << example_double_param_);
 
-     if (!get_parameter_or("/yaml_bool_param", example_bool_param_, true)) 
+     if (!get_parameter_or("yaml_bool_param", example_bool_param_, true)) 
         RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"yaml_bool_param parameter\" | Using Default: " << example_bool_param_);
 
-    if (!get_parameter_or("/yaml_vector_param", example_vector_param_, {1.1, 1.1})) 
+    if (!get_parameter_or("yaml_vector_param", example_vector_param_, {1.1, 1.1})) 
         RCLCPP_ERROR_STREAM(get_logger(), "Failed to read the \"yaml_vector_param parameter\" | Using Default: " << example_vector_param_[0] << ", " << example_vector_param_[1]);
 
     // ---- ROS - PUBLISHERS ---- //
@@ -69,6 +94,8 @@ ExamplePackage::ExamplePackage(std::string example_data, std::vector<double> exa
     RCLCPP_INFO_STREAM_ONCE(get_logger(), "cout Print Once: " << 10 << std::endl);
     RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 1000, "Print Every n Milliseconds");
     RCLCPP_INFO_SKIPFIRST_THROTTLE(get_logger(), *get_clock(), 1000, "Print Every n Milliseconds, Ignoring the First One");
+
+    while (true) rclcpp::spin_some(this->get_node_base_interface());
 
 }
 
@@ -351,5 +378,8 @@ void ExamplePackage::spinner (void) {
 
     // Call a ROS Action Client
     CallAction();
+
+	// Sleep to ROS Rate
+	ros_rate.sleep();
 
 }
