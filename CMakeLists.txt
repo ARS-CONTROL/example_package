@@ -79,7 +79,7 @@ add_executable(global_parameter_server src/global_parameter_server.cpp)
 ament_target_dependencies(global_parameter_server rclcpp)
 
 add_executable(example_cpp_node src/example_node.cpp src/example.cpp)
-ament_target_dependencies(example_cpp_node rclcpp rclcpp_action moveit_core moveit_ros_planning_interface)
+ament_target_dependencies(example_cpp_node rclcpp rclcpp_action moveit_core moveit_ros_planning_interface std_msgs control_msgs trajectory_msgs std_srvs)
 rosidl_target_interfaces(example_cpp_node ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
 # Install C++ Executables
@@ -90,7 +90,7 @@ install(TARGETS
 )
 
 # Install Python Modules
-ament_python_install_package(${PROJECT_NAME})
+ament_python_install_package(scripts)
 
 # Install Python Scripts
 install(PROGRAMS
